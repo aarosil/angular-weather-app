@@ -45,6 +45,7 @@ exports.getHistory = function(req,res) {
 	var query = req.params.query;
 	var startDate = new Date(parseInt(req.params.startDate, 10));
 	var endDate = new Date(parseInt(req.params.endDate, 10)||startDate);
+
 	console.log('query: ' + query + ', startDate: ' + startDate + ", endDate: " + endDate)
 
 	// given a start an end time, return an 
@@ -78,50 +79,59 @@ exports.getHistory = function(req,res) {
 	//so asynchronously process the requested dates one by one
 	async.forEach(requestedDates, function(date, callback){
 		wu.history(query, date, function (err,data){
-			if (err) { callback('An Error Occurred: ' + query); }
-			
+			if (err) { callback({"error": ' WeatherUnderground call failed: ' + err}) }
+
 			var json = JSON.parse(data)
-			var observations = json.history.observations
-			
-			var response = { 
-				//add master date to allow sorting/concatting of async data before response
-				date: new Date(observations[0].date.year, observations[0].date.mon, observations[0].date.mday)
-			}
+			if (json.history.observations.length === 0) {
+				//callback({"error": ' no observations returned from query ' + query});
+				return
+			} else {
+				var observations = json.history.observations
+				
+				var response = { 
+					//add master date to allow sorting/concatting of async data before response
+					date: new Date(observations[0].date.year, observations[0].date.mon, observations[0].date.mday)
+				}
 
-			//go through all 24 observations for the day
-			_.each(observations, function(obs){
-				//add each field as a data series in response.fieldname.series
-				_.each(fieldsToSend, function(field){
-					//create the field with keyname & blank array if as yet uninitialized
-					if (!response[field]) {
-						response[field] = {key: field, values: []}
-					}
-					var time = new Date(obs.date.year, obs.date.mon, obs.date.mday, obs.date.hour);
-					response[field].values.push([time.getTime(),parseInt(obs[field], 10)])
+				//go through all 24 observations for the day
+				_.each(observations, function(obs){
+					//add each field as a data series in response.fieldname.series
+					_.each(fieldsToSend, function(field){
+						//create the field with keyname & blank array if as yet uninitialized
+						if (!response[field]) {
+							response[field] = {key: field, values: []}
+						}
+						var time = new Date(obs.date.year, obs.date.mon, obs.date.mday, obs.date.hour);
+						response[field].values.push([time.getTime(),parseInt(obs[field], 10)])
 
+					})
 				})
-			})
-			responseData.push(response)
+				responseData.push(response)
 
-			//notify async processing is completed
-			callback();
+				//notify async processing is completed
+				callback();
+			}
 		});
 	//callback for when all of async's tasks are completed
 	}, function(err) {
-		if (err) return next(err);
-		var masterResponse = {}
-		//sort all the async responses by their date
-		responseData = _.sortBy(responseData, function(item){return item.date})
-		//then concat into one master dataseries representing all requested days.
-		_.each(responseData, function(resp){
-			_.each(fieldsToSend, function(field){
-				if (!masterResponse[field]) {
-					masterResponse[field] = {key: field, values: []}
-				}
-				masterResponse[field].values = masterResponse[field].values.concat(resp[field].values)
+		if (err) {
+			console.log(err);
+			return 
+		} else {
+			var masterResponse = {}
+			//sort all the async responses by their date
+			responseData = _.sortBy(responseData, function(item){return item.date})
+			//then concat into one master dataseries representing all requested days.
+			_.each(responseData, function(resp){
+				_.each(fieldsToSend, function(field){
+					if (!masterResponse[field]) {
+						masterResponse[field] = {key: field, values: []}
+					}
+					masterResponse[field].values = masterResponse[field].values.concat(resp[field].values)
+				})
 			})
-		})
-		res.send([masterResponse])
+			res.send([masterResponse])
+		}
 	})
 }
 
