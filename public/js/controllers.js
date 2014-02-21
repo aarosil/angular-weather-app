@@ -68,8 +68,8 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 
 				if ( s > minStart ) { return "Start Date must be more than one day ago"; }
 				if ( e && (s > minStart||e > minStart) ) { return "All dates must be in the past"; }
-				if ( e && e > s ) { return "End Date cannot be before Start Date"; }
-				if ( e && e > maxEnd) { return "Maximum report length is 9 days"; }
+				if ( e && (e < s) ) { return "End Date cannot be before Start Date"; }
+				if ( e && (e > maxEnd) ) { return "Maximum report length is 9 days"; }
 				
 				return null;
 			}
