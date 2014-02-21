@@ -1,0 +1,63 @@
+<!doctype html>
+<html data-ng-app="weatherApp">
+<head>
+	<meta charset="utf-8">
+	<title>WeatherStation App</title>
+	<script src="lib/jquery.min.js"></script>
+	<script src="lib/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">	
+	<link rel="stylesheet" href="css/nv.d3.css" type="text/css">
+	<link rel="stylesheet" href="css/style.css" type="text/css">
+</head>
+
+<body>
+
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation" data-ng-controller="NavCtrl">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#/"><span class="glyphicon-flash glyphicon"></span>WeatherStation</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li data-ng-class="{'active':highlight('/weather')}"><a href="#/weather">Get Weather</a></li>
+				<!--
+				<li data-ng-class="{'active':highlight('/reports')}"><a href="#/reports">Saved Reports</a></li>
+				-->
+			</ul>
+			<ul class="nav navbar-nav pull-right" >
+				<li data-ng-class="{'active':highlight('/about')}"><a href="#/about">About</a></li>
+			</ul>
+        </div>
+	</div>
+	
+	<div data-ng-view=""></div>
+
+    <div id="footer">
+        <div class="navbar navbar-default navbar-fixed-bottom">
+        	<div class="container">
+            	<div class="navbar-inner footer">
+                	<ul class="nav navbar-nav">
+                            Created by Aaron Siladi: <a href="https://github.com/aarosil/angular-weatherstation" target="_blank">View on GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<!-- 3rd Party Libraries  -->
+	<script src="lib/angular.js"></script>
+	<script src="lib/angular-route.js"></script>
+	<script src="lib/angular-resource.js"></script>	
+	<script src="lib/angular-cookies.js"></script>
+	<script src="lib/ui-bootstrap-tpls-0.7.0.js"></script>	
+	<script src="lib/underscore.js"></script>
+	
+	<!-- Site javascript -->
+	<script src="js/main.js"></script>
+	<script src="js/controllers.js"></script>
+	<script src="js/services.js"></script>
+	<script src="js/directives.js"></script>
+	<script src="js/angular-d3.js"></script>
+
+</body>
+
+</html>

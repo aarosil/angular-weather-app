@@ -1,0 +1,42 @@
+body { 
+	padding-top: 70px;
+	padding-bottom: 70px;
+}
+
+.section-header {
+	margin-bottom: 25px;
+}
+
+.item-header {
+	margin-bottom: 15px;
+	margin-top: 0px;
+}
+
+.footer {
+  margin-top:15px;
+  font-weight: bold;
+}
+
+span.disabled{
+	color: #C0C0C0;
+}
+ 	
+.list-group-item.active a {
+	color: #FFFFFF;
+}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+line {
+    stroke: black;
+}
+
+text {
+    font-family: Arial;
+    font-size: 9pt;
+}
+
