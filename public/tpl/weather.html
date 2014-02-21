@@ -34,7 +34,7 @@
 	                </div>
 	            </div>	
         	</form>
-        	<a class="btn btn-sm btn-primary" data-ng-click="loadWeather()" data-ng-disabled="!formData.location">Load Data</a>
+        	<a class="btn btn-sm btn-primary" data-ng-click="loadWeather()" data-ng-disabled="!formData.location||formData.dateValidationMessage">Load Data</a>
         </div>
             
             <a class="btn btn-sm" data-ng-click="instructions()">Instructions</a>		

@@ -82,10 +82,7 @@ exports.getHistory = function(req,res) {
 			if (err) { callback({"error": ' WeatherUnderground call failed: ' + err}) }
 
 			var json = JSON.parse(data)
-			if (json.history.observations.length === 0) {
-				//callback({"error": ' no observations returned from query ' + query});
-				return
-			} else {
+			if (json.history.observations.length !== 0) {
 				var observations = json.history.observations
 				
 				var response = { 
@@ -110,6 +107,10 @@ exports.getHistory = function(req,res) {
 
 				//notify async processing is completed
 				callback();
+				
+			} else {
+				//callback({"error": ' no observations returned from query ' + query});
+				return
 			}
 		});
 	//callback for when all of async's tasks are completed

@@ -58,27 +58,24 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 		$scope.validateDateRange = function () {
 			//ensure the two entered dates are not more than 9 days apart
 			//and the start date is less than the end date
-			if ($scope.formData.historyStart && $scope.formData.historyEnd) {
-
-				var start = $scope.formData.historyStart.getTime()
-				var end = $scope.formData.historyEnd.getTime()
-				var maxEnd = start + (9 * 86400000)
-
-				if (start > end ){
-					$scope.formData.historyEnd = ""
-					$scope.formData.dateValidationMessage = "Start date cannot be less than end date";
+			function validate(s,e) {
+				if (!s) return
 				
-				} else if (end > maxEnd) {
-					$scope.formData.historyEnd = ""
-					$scope.formData.dateValidationMessage = "Maximum report length is 9 days";
-					
-				} else {
-					$scope.formData.dateValidationMessage = "";
-				}
+				var s = s.getTime();
+				var e = e ? e.getTime() : null;
+				var minStart = (new Date).getTime() - 86400000;
+				var maxEnd = s + (9 * 86400000) 
 
-			}	else {
-				$scope.formData.dateValidationMessage = "";
+				if ( s > minStart ) { return "Start Date must be more than one day ago"; }
+				if ( e && (s > minStart||e > minStart) ) { return "All dates must be in the past"; }
+				if ( e && e > s ) { return "End Date cannot be before Start Date"; }
+				if ( e && e > maxEnd) { return "Maximum report length is 9 days"; }
+				
+				return null;
 			}
+
+			$scope.formData.dateValidationMessage = validate($scope.formData.historyStart, $scope.formData.historyEnd);
+	
 		}
 
 		$scope.loadWeather = function () {
