@@ -13,7 +13,7 @@ var geocode = new GoogleMapsClient(true);
 
 //use weather underground to get current 
 //weather conditions of a location
-exports.getWeather = function(req,res) {
+exports.getCurrentWeather = function(req,res) {
 	var query = req.params.query;
 	console.log('query: ' + query);
 	wu.conditions(query, function(err, data){
@@ -21,21 +21,9 @@ exports.getWeather = function(req,res) {
 			console.log('errors: ' + err)
 			res.send("An Error Occurred: " + query)
 		}
-		
-		var conds = JSON.parse(data).current_observation
-		//to save bandwidth, don't send entire WU response 
-		//just the fields we are interested in
-		var response = {
-			weather: conds.weather, 
-			temp_f: conds.temp_f,
-			temp_c: conds.temp_c,
-			relative_humidity: conds.relative_humidity,
-			wind: conds.wind_string,
-			dewpoint: conds.dewpoint_string
-		}
-		res.send(response)
+		var json = JSON.parse(data);
+		res.send(util.processWUCurrentConditions(json));
 	})
-
 }
 
 //use weather underground to collect an array 
@@ -55,7 +43,7 @@ exports.getHistory = function(req,res) {
 
 			var json = JSON.parse(data)
 			if (json.history.observations.length !== 0) {
-				responseData.push(util.processWUDailyObservations(json.history.observations, fieldsToCapture))
+				responseData.push(util.processWUDailyObservations(json.history.observations, fieldsToCapture));
 				//notify async processing is completed
 				callback();
 			} else {
@@ -84,6 +72,7 @@ exports.getLatLong = function(req, res) {
 		if (err) {
 			console.log('errors: ' + err)
 			res.send("An Error Occurred: " + query)
+			return;
 		}
 
 		var jsonData = JSON.parse(data)

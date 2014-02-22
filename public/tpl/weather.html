@@ -63,7 +63,7 @@
 						</tr>
 						<tr>
 							<td>Temperature: </td>
-							<td>{{weatherData.current.temp_f}} F, {{weatherData.current.temp_c}} C</td>							
+							<td>{{weatherData.current.temp_f}} F ({{weatherData.current.temp_c}} C)</td>							
 						</tr>
 						<tr>
 							<td>Humidity: </td>
@@ -71,11 +71,11 @@
 						</tr>
 						<tr>
 							<td>Wind: </td>
-							<td>{{weatherData.current.wind}}</td>							
+							<td>{{weatherData.current.wind_string}}</td>							
 						</tr>
 						<tr>
 							<td>Dewpoint: </td>
-							<td>{{weatherData.current.dewpoint}}</td>							
+							<td>{{weatherData.current.dewpoint_string}}</td>							
 						</tr>
 
 					</tbody>
@@ -85,14 +85,14 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-12">
-			<!--
+			
 			<pre>{{coords}}</pre>
 			<pre>{{weatherData.current}}</pre>
 			<pre>{{weatherData.tempi}}</pre>
 			<pre>{{formData.location}}</pre>
 			<pre>{{formData.historyStart}}</pre>
 			<pre>{{formData.historyEnd}}</pre>
-			-->
+			
 		</div>
 	</div>
 </div>

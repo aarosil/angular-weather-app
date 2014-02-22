@@ -24,7 +24,7 @@ if ('development' == app.get('env')) {
 /**
  * Assign Routes.
  */
-app.get('/weather/:query', wsvc.getWeather);
+app.get('/weather/:query', wsvc.getCurrentWeather);
 app.get('/history/:query/:startDate/:endDate', wsvc.getHistory);
 app.get('/history/:query/:startDate', wsvc.getHistory);
 app.get('/geocode/:location', wsvc.getLatLong);
