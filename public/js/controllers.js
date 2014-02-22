@@ -50,9 +50,19 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 			if ($scope.formData.location) {
 				$scope.weatherSvc.geocodeUserInput($scope.formData.location).then(function(data){
 					$scope.coords = data;
-					if (loadWeather) {$scope.loadWeather()}
+					if (loadWeather) {$scope.loadWeather();}
+				}, function (error) {
+					console.log("Error parsing user location: " + error);
+					$scope.formData.locationValidationMessage = "No matching locations";
 				})
 			}
+		}
+
+		$scope.onLocationChange = function() {
+			//clear coords and the location err msg 
+			//when the user starts typing a location
+			$scope.coords = {};
+			$scope.formData.locationValidationMessage = "";
 		}
 
 		$scope.validateDateRange = function () {
@@ -93,8 +103,6 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 
 				var start = $scope.formData.historyStart.getTime()
 				var end = $scope.formData.historyEnd ? $scope.formData.historyEnd.getTime() : null
-
-				console.log('start: ' + start + ' end: ' + end)
 
 				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
 					$scope.historicalData = data;

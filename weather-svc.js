@@ -107,7 +107,7 @@ exports.getHistory = function(req,res) {
 
 				//notify async processing is completed
 				callback();
-				
+
 			} else {
 				//callback({"error": ' no observations returned from query ' + query});
 				return
@@ -147,9 +147,16 @@ exports.getLatLong = function(req, res) {
 		}
 
 		var jsonData = JSON.parse(data)
-		var response = jsonData.results[0].geometry.location
-		console.log("resolved '" + query + "' to " + JSON.stringify(response))
-		res.send(response)
+
+		if (jsonData.results.length !== 0) {
+			var response = jsonData.results[0].geometry.location
+			console.log("resolved '" + query + "' to " + JSON.stringify(response))
+			res.send(response)
+		} else {
+			var msg = "no location match found for " + query
+			console.log(msg)
+			res.status(404).send({error: msg})
+		}
 	})
 
 }

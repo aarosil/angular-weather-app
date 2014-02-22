@@ -12,8 +12,10 @@
 	            <div class="form-group">
 	                <label for="id" class="col-lg-4 control-label">Location:</label>
 	                <div class="col-lg-8">
-	                <input class="form-control input-sm" data-ng-model="formData.location" type="text" data-ng-change="coords={}" data-ng-blur="parseUserLocation()">
+	                <input class="form-control input-sm" data-ng-model="formData.location" type="text" data-ng-change="onLocationChange()" data-ng-blur="parseUserLocation()">
 	                
+	                <span class="form-validation-msg" style="color: red; font-weight: bold">{{formData.locationValidationMessage}}</span>
+
 	                </div>
 	            </div>
 
@@ -34,7 +36,7 @@
 	                </div>
 	            </div>	
         	</form>
-        	<a class="btn btn-sm btn-primary" data-ng-click="loadWeather()" data-ng-disabled="!formData.location||formData.dateValidationMessage">Load Data</a>
+        	<a class="btn btn-sm btn-primary" data-ng-click="loadWeather()" data-ng-disabled="!formData.location||formData.locationValidationMessage||formData.dateValidationMessage">Load Data</a>
         </div>
             
             <a class="btn btn-sm" data-ng-click="instructions()">Instructions</a>		
@@ -52,11 +54,11 @@
 				<weather-line-chart data="weatherData.precipi" label="Precipitation"></weather-line-chart>
 			</div>
 			<div data-ng-show="weatherMode === 'current'">
-				<table class="table table-striped table-hover">
-					<tbody class="currentweather-table" ui-sortable="sortAlbums" data-ng-model="albums">  
+				<table class="table table-striped">
+					<tbody class="currentweather-table">  
 						<h4>Current Weather Conditions for {{formData.location}}</h4>
 						<tr>
-							<td style="bold">Description: </td>
+							<td>Description: </td>
 							<td>{{weatherData.current.weather}}</td>							
 						</tr>
 						<tr>
