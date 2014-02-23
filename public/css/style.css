@@ -47,3 +47,7 @@ text {
     font-size: 9pt;
 }
 
+.arc path {
+  stroke: #fff;
+}
+

@@ -53,6 +53,7 @@
 				<weather-line-chart data="weatherData.hum" label="Humidity"></weather-line-chart>	
 				<weather-line-chart data="weatherData.precipi" label="Precipitation"></weather-line-chart>
 				<weather-line-chart data="weatherData.conds" label="Cloud Cover"></weather-line-chart>
+				<weather-pie-chart data="weatherData.clouds"></weather-pie-chart>
 			</div>
 			<div data-ng-show="weatherMode === 'current'">
 				<table class="table table-striped">
@@ -86,16 +87,15 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-12">
-			<!--
+
 			<pre>{{coords}}</pre>
 			<pre>{{weatherData.current}}</pre>
 			<pre>{{weatherData}}</pre>
 			<pre>{{weatherData.tempi}}</pre>
 			<pre>{{weatherData.cloudyDaylightHours}}</pre>
-			<pre>{{formData.location}}</pre>
 			<pre>{{formData.historyStart}}</pre>
 			<pre>{{formData.historyEnd}}</pre>
-			-->
+
 		</div>
 	</div>
 </div>
