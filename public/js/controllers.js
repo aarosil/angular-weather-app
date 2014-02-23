@@ -105,10 +105,11 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 				var end = $scope.formData.historyEnd ? $scope.formData.historyEnd.getTime() : null
 
 				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
-					$scope.historicalData = data;
-					$scope.weatherData.tempi=data[0].tempi;
-					$scope.weatherData.hum=data[0].hum;
-					$scope.weatherData.precipi=data[0].precipi;;
+					$scope.weatherData = data[0];
+					//$scope.weatherData.tempi=data[0].tempi;
+					//$scope.weatherData.hum=data[0].hum;
+					///$scope.weatherData.precipi=data[0].precipi;
+					//$scope.weatherData.conds=data[0].conds;
 					$scope.weatherMode = 'historical';
 				})
 

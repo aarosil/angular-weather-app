@@ -32,7 +32,7 @@ exports.getCurrentWeather = function(req,res) {
 exports.getHistory = function(req,res) {
 	var query = req.params.query;
 	var requestedDates = util.formatDatesWU(req.params.startDate,req.params.endDate);
-	var fieldsToCapture = ['tempi','hum','pressurei','precipi','fog','rain','snow'];
+	var fieldsToCapture = ['tempi','hum','pressurei','precipi','fog','rain','snow', 'conds'];
 	var responseData = [];
 
 	//weather underground returns at most 1 day of observations
@@ -41,9 +41,9 @@ exports.getHistory = function(req,res) {
 		wu.history(query, date, function (err,data){
 			if (err) { callback({"error": ' WeatherUnderground call failed: ' + err}) }
 
-			var json = JSON.parse(data)
-			if (json.history.observations.length !== 0) {
-				responseData.push(util.processWUDailyObservations(json.history.observations, fieldsToCapture));
+			var jsonData = JSON.parse(data)
+			if (jsonData.hasOwnProperty('history')) {
+				responseData.push(util.processWUDailyObservations(jsonData.history, fieldsToCapture));
 				//notify async processing is completed
 				callback();
 			} else {
@@ -51,11 +51,13 @@ exports.getHistory = function(req,res) {
 				return
 			}
 		});
+
 	//callback for when all of async's tasks are completed
 	}, function(err) {
 		if (!err) {
 			var masterResponse = util.sortAndConcatWUResponses(responseData, fieldsToCapture);
-			res.send(masterResponse)
+			masterResponse.cloudyDaylightHours = util.cloudyDaylightHours(masterResponse, query);
+			res.send([masterResponse])
 
 		} else {
 			console.log(err);
@@ -78,14 +80,16 @@ exports.getLatLong = function(req, res) {
 		var jsonData = JSON.parse(data)
 
 		if (jsonData.results.length !== 0) {
-			var response = jsonData.results[0].geometry.location
+			var response = jsonData.results[0].geometry.location	
 			console.log("resolved '" + query + "' to " + JSON.stringify(response))
 			res.send(response)
+
 		} else {
 			var msg = "no location match found for " + query
 			console.log(msg)
 			res.status(404).send({error: msg})
 		}
+
 	})
 
 }
