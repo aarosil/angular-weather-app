@@ -10,8 +10,9 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 			link: function(scope, ele, attrs) {
 				d3Service.d3().then(function(d3) {
 					
-					var svg = d3.select(ele[0]).append('svg:svg')
-						//.style('width', '100%');
+					var svg = d3.select(ele[0])
+						.append('svg:svg')
+						.style('width', '100%');
 
 					window.onresize = function() {
 						scope.$apply();
@@ -42,7 +43,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						
 						if(!data) return;						
 						
-						var elemWidth = svg.node().offsetWidth;
+						var elemWidth = svg.node().offsetWidth||450;
 						var margin = {top: 20, right: 20, bottom: 30, left: 50},
 						    width =  parseInt(elemWidth,10) - margin.left - margin.right,
 						    height = 200 - margin.top - margin.bottom;
@@ -140,16 +141,7 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 
 						if(!data) return;						
 
-						//data = [ 
-						//data is the % cloudy daylight hours 
-						//	{status: "Cloudy" , value: 100 * data},
-						//	{status: "Clear" , value: 100 * (1-data)}
-						//];
-
-						var elemWidth = svg.node().offsetWidth;
-						//var elemWidth = 700
-						//console.log(d3.select(ele[0]).node())
-						//console.log('elemWidth: ' + elemWidth)
+						var elemWidth = svg.node().offsetWidth||450;
 						var width =  elemWidth;
 						var height = 200 ;					
 						var radius = Math.min(width, height) / 2;
