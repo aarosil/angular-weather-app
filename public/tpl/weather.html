@@ -14,7 +14,7 @@
 	                <div class="col-lg-8">
 	                <input class="form-control input-sm" data-ng-model="formData.location" type="text" data-ng-change="onLocationChange()" data-ng-blur="parseUserLocation()">
 	                
-	                <span class="form-validation-msg" style="color: red; font-weight: bold">{{formData.locationValidationMessage}}</span>
+	                <span class="form-validation-msg" >{{formData.locationValidationMessage}}</span>
 
 	                </div>
 	            </div>
@@ -31,7 +31,7 @@
 	                <div class="col-lg-8">       
 	                <input class="form-control input-sm" datepicker-popup="{{format}}" ng-model="formData.historyEnd" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" type="text" data-ng-change="validateDateRange()">
 	                
-	                <span class="form-validation-msg" style="color: red; font-weight: bold">{{formData.dateValidationMessage}}</span>
+	                <span class="form-validation-msg" >{{formData.dateValidationMessage}}</span>
 	                
 	                </div>
 	            </div>	

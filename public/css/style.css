@@ -25,6 +25,13 @@ span.disabled{
 	color: #FFFFFF;
 }
 
+.form-validation-msg {
+	font-weight: bold;
+	color: red;
+	float: right;
+	font-size: 9pt;
+}
+
 path {
     stroke: steelblue;
     stroke-width: 2;
