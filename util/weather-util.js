@@ -54,7 +54,7 @@ exports.processWUDailyObservations = function(data, fields) {
 		}
 		//go through all 24 observations for the day
 		_.each(observations, function(obs){
-			var time = new Date(obs.date.year, obs.date.mon, obs.date.mday, obs.date.hour).getTime();
+			var time = new Date(obs.date.year, obs.date.mon, obs.date.mday, obs.date.hour, obs.date.min).getTime();
 			//add each field as a data series in response.fieldname.series
 			_.each(fields, function(field){
 				//create the field with keyname & blank array if as yet uninitialized
@@ -120,7 +120,7 @@ exports.cloudyDaylightHours = function(data, latLong) {
 			// store in times[day] - *** only works if report is < 30 days ***
 			times[day] = SunCalc.getTimes(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0, 0), lat, lng);
 		}
-		if ( times[day].sunriseEnd < date.getTime < times[day].sunset ) {
+		if ( times[day].sunriseEnd < date.getTime() < times[day].sunset ) {
 			j++;
 			i += d[1];
 		}  

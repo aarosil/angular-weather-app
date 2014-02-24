@@ -5,7 +5,8 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 		return {
 			restrict: 'EA', 
 			scope: {
-				data: '='
+				data: '=',
+				label: '='
 			},
 			link: function(scope, ele, attrs) {
 				d3Service.d3().then(function(d3) {
@@ -93,7 +94,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 							.attr("y", 6)
 							.attr("dy", ".71em")
 							.style("text-anchor", "end")
-							.text(attrs.label);;						
+							.text(scope.label);;						
 
 						svg.append("path")
 							.datum(data)

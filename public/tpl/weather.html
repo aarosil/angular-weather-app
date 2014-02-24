@@ -60,7 +60,7 @@
 								</span>
 							</div>
 							<div data-ng-show="!graphStates[o.name]">
-								<weather-line-chart data="weatherData[o.name]" label="{{o.name}}"></weather-line-chart>
+								<weather-line-chart data="weatherData[o.name]" label="o.displayName"></weather-line-chart>
 							</div>
 							<div data-ng-show="rawStates[o.name]">
 								<table class="table table-striped">

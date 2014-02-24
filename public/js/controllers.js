@@ -115,7 +115,6 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 							{status: "Cloudy" , value: cloudy},
 							{status: "Clear" , value: 100 - cloudy }
 						];
-					console.log($scope.weatherData.clouds)
 					$scope.weatherMode = 'historical';
 				})
 
