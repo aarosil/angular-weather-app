@@ -37,65 +37,93 @@
 	            </div>	
         	</form>
         	<a class="btn btn-sm btn-primary" data-ng-click="loadWeather()" data-ng-disabled="!formData.location||formData.locationValidationMessage||formData.dateValidationMessage">Load Data</a>
-        </div>
+        	</div>
             
-            <a class="btn btn-sm" data-ng-click="instructions()">Instructions</a>		
-            <a class="btn btn-sm" data-ng-click="getLocation()">Retrieve Location Automatically</a>		
-            
-		
+	        <a class="btn btn-sm btn-default" data-ng-click="instructions()">Instructions</a>		
+	        <a class="btn btn-sm btn-default" data-ng-click="getLocation()">Retrieve Location Automatically</a>				
 
 		</div>
 		<div class="col-lg-8">
-			<div data-ng-show="weatherMode === 'historical'">
-				<h4>Historical Weather Data for {{formData.location}}</h4>
-				<p>Date Range {{formData.historyStart.toDateString()}} - {{formData.historyEnd.toDateString()}}
-				<weather-line-chart data="weatherData.tempi" label="Temperature"></weather-line-chart>
-				<weather-line-chart data="weatherData.hum" label="Humidity"></weather-line-chart>	
-				<weather-line-chart data="weatherData.precipi" label="Precipitation"></weather-line-chart>
-				<weather-line-chart data="weatherData.conds" label="Cloud Cover"></weather-line-chart>
-				<weather-pie-chart data="weatherData.clouds"></weather-pie-chart>
-			</div>
-			<div data-ng-show="weatherMode === 'current'">
-				<table class="table table-striped">
-					<tbody class="currentweather-table">  
-						<h4>Current Weather Conditions for {{formData.location}}</h4>
-						<tr>
-							<td>Description: </td>
-							<td>{{weatherData.current.weather}}</td>							
-						</tr>
-						<tr>
-							<td>Temperature: </td>
-							<td>{{weatherData.current.temp_f}} F ({{weatherData.current.temp_c}} C)</td>							
-						</tr>
-						<tr>
-							<td>Humidity: </td>
-							<td>{{weatherData.current.relative_humidity}}</td>							
-						</tr>
-						<tr>
-							<td>Wind: </td>
-							<td>{{weatherData.current.wind_string}}</td>							
-						</tr>
-						<tr>
-							<td>Dewpoint: </td>
-							<td>{{weatherData.current.dewpoint_string}}</td>							
-						</tr>
+			<div data-ng-switch on="weatherMode">
+				<div data-ng-switch-when="historical">
+					<h4>Historical Weather Data for {{formData.location}}</h4>
+					<p><b>Date Range:</b> {{formData.historyStart.toDateString()}} <span data-ng-show="formData.historyEnd"> to {{formData.historyEnd.toDateString()}}</span></p>
+					
+					<div class="list-group">
+						<!-- repeat a list group item for regular graph metrics -->
+						<div class="list-group-item" data-ng-repeat="o in displayNames">  
+							<div class="list-group-item-heading">
+								<span class="data-heading">{{o.displayName}}	</span>
+								<span class="data-expand-link" style="float: right">
+									<a data-ng-click="rawStates[o.name] = !rawStates[o.name]">{{(!rawStates[o.name] ? 'Show' : 'Hide')}} Data</a>
+									<a data-ng-click="graphStates[o.name] = !graphStates[o.name]">{{(graphStates[o.name] ? 'Show' : 'Hide')}} Graph</a>
+								</span>
+							</div>
+							<div data-ng-show="!graphStates[o.name]">
+								<weather-line-chart data="weatherData[o.name]" label="{{o.name}}"></weather-line-chart>
+							</div>
+							<div data-ng-show="rawStates[o.name]">
+								<table class="table table-striped">
+									<tbody class="rawdata-table"> 	
+										<tr>
+											<th>Timestamp</th>
+											<th>Value</th>							
+										</tr>	
+										<tr data-ng-repeat="row in weatherData[o.name].values">
+											<td>{{date.(row[0]).toUTCString()}}</td>
+											<td>{{row[1]}}</td>
+										</tr>									
+									</tbody>
+								</table>						
+							</div>							
+						</div>
+						<!-- one off for pie chart cloudiness -->
+						<div class="list-group-item">
+							<div class="list-group-item-heading">
+								<span class="data-heading">Average Daytime Cloudiness	</span>
+								<span class="data-expand-link" style="float: right">
+									<a data-ng-click="graphStates['avgcloud'] = !graphStates['avgcloud']">{{(graphStates['avgcloud'] ? 'Show' : 'Hide')}} Graph</a>
+								</span>
+							</div>
+							<div data-ng-show="!graphStates['avgcloud']">
+								<weather-pie-chart data="weatherData.clouds"></weather-pie-chart>
+							</div>						
+						</div>
 
-					</tbody>
-				</table>
+					</div>
+				</div>
+
+				<div data-ng-switch-when="current">
+					<table class="table table-striped">
+						<tbody class="currentweather-table">  
+							<h4>Current Weather Conditions for {{formData.location}}</h4>
+							<tr>
+								<td>Description: </td>
+								<td>{{weatherData.current.weather}}</td>							
+							</tr>
+							<tr>
+								<td>Temperature: </td>
+								<td>{{weatherData.current.temp_f}} F ({{weatherData.current.temp_c}} C)</td>							
+							</tr>
+							<tr>
+								<td>Humidity: </td>
+								<td>{{weatherData.current.relative_humidity}}</td>							
+							</tr>
+							<tr>
+								<td>Wind: </td>
+								<td>{{weatherData.current.wind_string}}</td>							
+							</tr>
+							<tr>
+								<td>Dewpoint: </td>
+								<td>{{weatherData.current.dewpoint_string}}</td>							
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+
 			</div>			
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-lg-12">
 
-			<pre>{{coords}}</pre>
-			<pre>{{weatherData.current}}</pre>
-			<pre>{{weatherData}}</pre>
-			<pre>{{weatherData.tempi}}</pre>
-			<pre>{{weatherData.cloudyDaylightHours}}</pre>
-			<pre>{{formData.historyStart}}</pre>
-			<pre>{{formData.historyEnd}}</pre>
-
-		</div>
-	</div>
 </div>

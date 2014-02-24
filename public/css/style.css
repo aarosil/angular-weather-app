@@ -32,6 +32,17 @@ span.disabled{
 	font-size: 9pt;
 }
 
+.data-heading {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+
+.data-expand-link {
+	font-weight: bold;
+	font-size: 9px;
+	float: right;
+}
+
 path {
     stroke: steelblue;
     stroke-width: 2;

@@ -156,8 +156,6 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 						var pie = d3.layout.pie()
 							.sort(null)
 							.value(function(d) { return d.value; });
-
-						console.log('new width: ' + width + ' height: ' + height )
 						
 						svg.attr("width", parseInt(width, 10))
 							.attr("height", height)
@@ -178,7 +176,7 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 							.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
 							.attr("dy", ".35em")
 							.style("text-anchor", "middle")
-							.text(function(d) { return d.data.status + "(" + d.data.value + "%)"; });
+							.text(function(d) { return d.data.status + " (" + d.data.value + "%)"; });
 
 					}					
 

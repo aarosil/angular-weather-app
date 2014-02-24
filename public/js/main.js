@@ -6,15 +6,13 @@ var weatherApp = angular.module('weatherApp', [
 		'weatherDirectives',
 		'ui.bootstrap', 
 		'd3'
-		//'nvd3ChartDirectives'
 	]);
 
 weatherApp.config(['$routeProvider',
 	function($routeProvider) {
 		$routeProvider.
 			when('/', {
-				templateUrl: 'tpl/home.html',
-				controller: 'HomeCtrl'
+				templateUrl: 'tpl/home.html'
 			}).
 			when('/weather', {
 				templateUrl: 'tpl/weather.html',

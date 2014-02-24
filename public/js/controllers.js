@@ -1,11 +1,5 @@
 var weatherControllers = angular.module('weatherControllers', ['weatherDirectives']);
 
-weatherControllers.controller('HomeCtrl', ['$scope',
-	function($scope) {
-		$scope.homeMsg = "WeatherStation lets you view current or historical weather conditions for your location.";
-	}
-]);
-
 weatherControllers.controller('NavCtrl', ['$scope', '$location',
 	function($scope, $location) {
 		//highlight navbar if section matches browser URL
@@ -14,7 +8,6 @@ weatherControllers.controller('NavCtrl', ['$scope', '$location',
         };
 	}
 ]);
-
 
 weatherControllers.controller('modalCtrl', ['$scope', '$modalInstance', 
 	function($scope, $modalInstance) {
@@ -32,7 +25,18 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 		$scope.formData = {};
 		$scope.weatherData = {};
   		$scope.format = 'yyyy/MM/dd';
-  		
+  		$scope.graphStates = {}; //store collapse/open state of graphs
+  		$scope.rawStates = {}; //store collapse/open state of raw data
+  		$scope.displayNames = [
+  			{name: 'tempi', displayName: 'Temperature', order: 0},
+  			{name: 'hum', displayName: 'Humidity', order: 1},
+  			{name: 'precipi', displayName: 'Precipitation', order:2},
+  			{name: 'conds', displayName: 'Cloud Cover', order: 3}
+  		];
+
+  		//used in raw data table to show human readable date
+  		$scope.date = function(date) {return new Date(date);}
+
 		$scope.getLocation = function () {
 			//get user coordinates using  HTML5 GeoLocation API in Browser
 			//Only Modern Browsers supported
@@ -104,6 +108,7 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 				var end = $scope.formData.historyEnd ? $scope.formData.historyEnd.getTime() : null
 
 				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
+					$scope.graphStates = {}; //all graphs = show
 					$scope.weatherData = data[0];
 					var cloudy =  parseInt(100 * data[0].cloudyDaylightHours,10);
 					$scope.weatherData.clouds = [ 
