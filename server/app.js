@@ -4,7 +4,7 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var wsvc = require('./weather-svc');
+var wsvc = require('../app/weather-svc');
 var app = express();
 
 /**
@@ -16,7 +16,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, './public')));
+app.use(express.static(path.join(__dirname, '../app/public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }

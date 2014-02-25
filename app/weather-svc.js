@@ -1,7 +1,7 @@
 var async = require('async');
 
-var WeatherUndergroundClient = require('./wunderground');
-var GoogleMapsClient = require('./geocode');
+var WeatherUndergroundClient = require('./apiclient/wunderground');
+var GoogleMapsClient = require('./apiclient/geocode');
 var util = require('./util/weather-util');
 
 var WUApiKey = 'a9b08241c785e5ee';

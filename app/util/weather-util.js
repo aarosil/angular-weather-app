@@ -120,7 +120,7 @@ exports.cloudyDaylightHours = function(data, latLong) {
 			// store in times[day] - *** only works if report is < 30 days ***
 			times[day] = SunCalc.getTimes(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0, 0), lat, lng);
 		}
-		if ( times[day].sunriseEnd < date.getTime() < times[day].sunset ) {
+		if ( times[day].sunriseEnd.getTime() < date.getTime() < times[day].sunset.getTime() ) {
 			j++;
 			i += d[1];
 		}  
