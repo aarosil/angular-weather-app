@@ -67,8 +67,9 @@ exports.processWUDailyObservations = function(data, fields) {
 					response[field].values.push([time, wuSkyConditionsMap(obs[field])]) 
 				} else { 
 					//ignore some weatherstations reporting "-9999.00" for unknowns
-					if (obs[field] === "-9999.00" ) { obs[field] = 0; }
-					response[field].values.push([time, obs[field]])
+					if (obs[field] !== "-9999.00" && obs[field] !== "N/A") { 
+						response[field].values.push([time, obs[field]])
+					}
 				}				
 			})
 		})	
