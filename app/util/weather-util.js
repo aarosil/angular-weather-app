@@ -54,7 +54,7 @@ exports.processWUDailyObservations = function(data, fields) {
 		}
 		//go through all 24 observations for the day
 		_.each(observations, function(obs){
-			var time = new Date(obs.date.year, obs.date.mon, obs.date.mday, obs.date.hour, obs.date.min).getTime();
+			var time = new Date(obs.date.year, parseInt(obs.date.mon, 10)-1, obs.date.mday, obs.date.hour, obs.date.min).getTime();
 			//add each field as a data series in response.fieldname.series
 			_.each(fields, function(field){
 				//create the field with keyname & blank array if as yet uninitialized
