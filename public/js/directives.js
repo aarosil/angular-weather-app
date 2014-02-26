@@ -15,7 +15,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						.append('svg:svg')
 						.style('width', '100%');
 
-					window.onresize = function() {
+					$window.onresize = function() {
 						scope.$apply();
 					}
 
@@ -33,7 +33,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 					scope.processData = function(data){
 						if (typeof data !== 'undefined') {
 							if (typeof data.values !== 'undefined') {
-								var data = window._.map(data.values, (function(item){return {"x": item[0], "y":item[1]}}))
+								var data = $window._.map(data.values, (function(item){return {"x": item[0], "y":item[1]}}))
 								scope.render(data)	
 							} 
 						}
@@ -122,7 +122,7 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 						.append('svg:svg')
 						.style('width', '100%');
 
-					window.onresize = function() {
+					$window.onresize = function() {
 						scope.$apply();
 					}
 					
