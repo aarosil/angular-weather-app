@@ -1,7 +1,7 @@
 var d3js = angular.module('d3', []);
 
-d3js.factory('d3Service', ['$document', '$q', '$rootScope',
-    function($document, $q, $rootScope) {
+d3js.factory('d3Service', ['$document', '$q', '$rootScope', '$window',
+    function($document, $q, $rootScope, $window) {
         var d = $q.defer();
 
         function onScriptLoad() {
