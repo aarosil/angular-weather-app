@@ -21,19 +21,19 @@ weatherServices.factory('GeoLocation', ['$q', '$rootScope', '$window', 'geolocat
 					}, function(error) {
 						switch (error.code) {
 						case 1:
-						$rootScope.$broadcast('error',geolocation_msgs['errors.location.permissionDenied']);
+						$rootScope.$broadcast('geolocation_error',geolocation_msgs['errors.location.permissionDenied']);
 						$rootScope.$apply(function() {
 							deferred.reject(geolocation_msgs['errors.location.permissionDenied']);
 						});
 						break;
 						case 2:
-						$rootScope.$broadcast('error',geolocation_msgs['errors.location.positionUnavailable']);
+						$rootScope.$broadcast('geolocation_error',geolocation_msgs['errors.location.positionUnavailable']);
 						$rootScope.$apply(function() {
 							deferred.reject(geolocation_msgs['errors.location.positionUnavailable']);
 						});
 						break;
 						case 3:
-						$rootScope.$broadcast('error',geolocation_msgs['errors.location.timeout']);
+						$rootScope.$broadcast('geolocation_error',geolocation_msgs['errors.location.timeout']);
 						$rootScope.$apply(function() {
 							deferred.reject(geolocation_msgs['errors.location.timeout']);
 						});
@@ -41,7 +41,7 @@ weatherServices.factory('GeoLocation', ['$q', '$rootScope', '$window', 'geolocat
 		            }
 		          }, opts);  
 		        } else {
-		          $rootScope.$broadcast('error',geolocation_msgs['errors.location.unsupportedBrowser']);
+		          $rootScope.$broadcast('geolocation_error',geolocation_msgs['errors.location.unsupportedBrowser']);
 		          $rootScope.$apply(function(){deferred.reject(geolocation_msgs['errors.location.unsupportedBrowser']);});		        	
 		        }
 		        return deferred.promise;          

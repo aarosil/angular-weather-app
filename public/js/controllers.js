@@ -47,6 +47,12 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 			});
 		}
 
+		//listen for error message from GeoLocation service
+		$scope.$on('geolocation_error', function(event, message){
+			console.log(event)
+			$scope.formData.geolocationErrorMessage = message;
+		})
+
 		$scope.parseUserLocation = function (loadWeather) {
 			//if HTML5 Geolocation API fails or is denied
 			//get coordinates from user entered location

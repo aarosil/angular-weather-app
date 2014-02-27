@@ -32,6 +32,12 @@ span.disabled{
 	font-size: 9pt;
 }
 
+.geolocate-error {
+	font-weight: bold;
+	color: red;
+	font-size: 9pt;
+}
+
 .data-heading {
 	font-weight: bold;
 	padding-bottom: 10px;
