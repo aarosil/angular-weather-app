@@ -11,8 +11,6 @@ describe('D3 Service', function(){
 		$service = $injector.get('d3Service');
 	}))
 
-  var service = $service;
-
   it('should have a function d3', function(){
   	expect(angular.isFunction($service.d3)).toBe(true);
   })
@@ -106,9 +104,9 @@ describe('Weather', function(){
     $scope = $rootScope.$new();
     $service = $injector.get('Weather');
     $httpBackend = $injector.get('$httpBackend');
-    $httpBackend.when('GET', '/weather/37.7749295,-122.4194155').respond({"weather":"Mostly Cloudy","temp_f":30,"temp_c":-1,"relative_humidity":"40%","wind_string":"","dewpoint_string":"14 F (-10 C)"})    
-    $httpBackend.when('GET', '/history/37.7749295,-122.4194155/1391328000000/1391414400000').respond([{"tempi":{"key":"tempi","values":[[1393750560000,"48.9"],[1393754160000,"48.9"]]}}])
-    $httpBackend.when('GET', '/history/37.7749295,-122.4194155/1391332000000/').respond([{"tempi":{"key":"tempi","values":[[1393750560000,"48.9"],[1393754160000,"48.9"],[1393754160000,"48.9"]]}}])
+    $httpBackend.when('GET', '/weather/37.7749295,-122.4194155').respond({"weather":"Mostly Cloudy","temp_f":30,"temp_c":-1,"relative_humidity":"40%","wind_string":"","dewpoint_string":"14 F (-10 C)"});
+    $httpBackend.when('GET', '/history/37.7749295,-122.4194155/1391328000000/1391414400000').respond([{"tempi":{"key":"tempi","values":[[1393750560000,"48.9"],[1393754160000,"48.9"]]}}]);
+    $httpBackend.when('GET', '/history/37.7749295,-122.4194155/1391332000000').respond([{"tempi":{"key":"tempi","values":[[1393750560000,"48.9"],[1393754160000,"48.9"],[1393754160000,"48.9"]]}}]);
   }))
 
   afterEach(function(){
@@ -120,7 +118,7 @@ describe('Weather', function(){
     expect(angular.isFunction($service.getCurrent)).toBe(true)
   })
 
-  var result = "", start, end
+  var result = ""
   var query = "37.7749295,-122.4194155"
   
   it('getCurrent should call /weather with the URL parameters', function() {
@@ -138,8 +136,8 @@ describe('Weather', function(){
   })
 
   it('getHistorical should call /historical with the URL parameters for both dates', function() {
-    start = new Date(1391328000000)
-    end = new Date(1391414400000)
+    var start = new Date(1391328000000)
+    var end = new Date(1391414400000)
     $scope.$apply(function(){
       $service.getHistorical({query: query, startDate: start.getTime(), endDate: end.getTime()}).$promise.then(function(data){
         result = data
@@ -149,16 +147,16 @@ describe('Weather', function(){
     expect(result[0].tempi.values.length).toBe(2)
   })
 
-  xit('getHistorical should call /historical with URL param for only 1 day', function(data){
-    start = new Date(1391332000000)
-    end = null
-    $scope.$apply(function(){    
-      $service.getHistorical({query: query, startDate: start.getTime(), endDate: null}).$promise.then(function(data){
+  it('getHistorical should call /historical with the URL parameters for one date', function() {
+    var start = new Date(1391332000000)
+    var end = null
+    $scope.$apply(function(){
+      $service.getHistorical({query: query, startDate: start.getTime(), endDate: end}).$promise.then(function(data){
         result = data
       })
     })
     $httpBackend.flush()
-    expect(result[0].tempi.values.length).toBe(3)    
+    expect(result[0].tempi.values.length).toBe(3)
   })
 
 })

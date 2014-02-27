@@ -6,7 +6,7 @@ d3js.factory('d3Service', ['$document', '$q', '$rootScope', '$window',
 
         function onScriptLoad() {
             // Load client in the browser
-            $rootScope.$apply(function() { d.resolve(window.d3); });
+            $rootScope.$apply(function() { d.resolve($window.d3); });
         }
         // Create a script tag with d3 as the source
         // and call our onScriptLoad callback when it
