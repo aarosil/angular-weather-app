@@ -30,25 +30,29 @@ describe('D3 Service', function(){
 describe('GeoLocation service', function(){
 
   beforeEach(module('weatherServices'));
+  var GeoLocation, $rootScope, $window;
 
-  var $service;
-
-  beforeEach(inject(function($injector) {
-  	$service = $injector.get('GeoLocation');
-  }))
+  beforeEach(inject(function(_GeoLocation_, _$rootScope_, _$window_) {
+  	GeoLocation = _GeoLocation_;
+    $rootScope = _$rootScope_;
+    $window = _$window_;
+  }));
 
   it('returns an object with a getLocation function', function(){
-  	expect(angular.isFunction($service.getLocation)).toBe(true);
+  	expect(angular.isFunction(GeoLocation.getLocation)).toBe(true);
   })
 
-  it('getLocation function returns promise with user coords', function(){
-  	//expect(angular.isFunction($window.navigator.geolocation.getCurrentPosition)).toBe(true)
-  	var result = $service.getLocation()
-  	expect(typeof result.then).toBe('function')
-  	result.then(function(data){
-  		expect(data.coords).not.toBe(undefined)
-  		expect(typeof data.coords.longitude).toBe('number')
-  	})
+  it('getLocation should obtain user location from the Browser', function(){
+    var results;
+    spyOn($window.navigator.geolocation,'getCurrentPosition').andCallFake(function(){
+      var position = { coords: { latitude: 37, longitude: -122 } };
+      arguments[0](position);
+    })
+    GeoLocation.getLocation().then(function(data){
+      results = data;
+    })
+    $rootScope.$digest();
+    expect(results).toEqual({coords: { latitude: 37, longitude: -122 }})
   })
 
 })

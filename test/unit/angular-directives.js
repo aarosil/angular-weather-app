@@ -1,121 +1,69 @@
 /*********************************
-/Line Chart Directive
+/D3 Graph Directives
 /********************************/
+describe('d3 Directives', function(){
+	// reuse variables in all tests
+	var $compile, $rootScope, $window, mockd3Service, $q, html, element, data;
+	// Recompile with new data/directive
+	function compileElement(html, data) {
+		var e = angular.element(html)
+		e = $compile(html)($rootScope)		
+		$rootScope.testData = data
+		$rootScope.$digest();
+		element = e
+	}
+	// setup testbed and inject mock 
+	// d3Service to load d3.v3.js script
+	beforeEach(function(){
+		mockd3Service = {}
+		module('weatherDirectives')
 
-describe('Line Chart Directive', function() {
-	beforeEach(module('weatherDirectives'));
-	var $scope, elem, directive, compiled, html
+		module(function($provide){
+			$provide.value('d3Service', mockd3Service)
+		})
 
-	html = '<weather-line-chart label="testLabel" data="testData"></weather-line-chart>'
+		inject(function(_$compile_, _$rootScope_, _$window_, _$q_) {
+			$window = _$window_;
+			$compile = _$compile_;
+			$rootScope = _$rootScope_;
+			$q = _$q_
+		});
 
-  beforeEach(function (){
-    //load the module
-    module('weatherDirectives');
-    
-    //set our view html.
-    //html = '<div sample-one="foo"></div>';
-    
-    inject(function($compile, $rootScope) {
-      //create a scope (you could just use $rootScope, I suppose)
-      $scope = $rootScope.$new();
-      
-      //get the jqLite or jQuery element
-      elem = angular.element(html);
-      
-      //compile the element into a function to 
-      // process the view.
-      compiled = $compile(elem);
-      
-      //run the compiled view.
-      compiled($scope);
-      
-      //call digest on the scope!
-      $scope.$digest();
-    });
-  });
+		mockd3Service.d3 = function() {
+			var deferred = $q.defer();
+			deferred.resolve($window.d3)
+			return deferred.promise;
+		}
 
-	iit('should create an SVG element with its data', function(){
-		$scope.testData = {"values":[[1393750560000,"48.9"],[1393754160000,"48.9"],[1393754160000,"48.9"]]}
-		$scope.$digest();
-		console.log(elem)
-
-	})
-
-
-})
+	});
 
 /*********************************
-/Pie Chart Directive
+/weatherPieChart Directive
 /********************************/
-describe('Pie Chart Directive', function(){
-
-	var $scope, elem, compiled, html;
-
-  beforeEach(function (){
-    module('weatherDirectives');   
-    html = '<weather-pie-chart data="testData"></weather-pie-chart>'; 
-    inject(function($compile, $rootScope) {
-      $scope = $rootScope.$new();
-      elem = angular.element(html);
-      compiled = $compile(elem);
-      compiled($scope);
-      $scope.$digest();
-			$scope.testData = [{status: "Cloudy" , value: 78}, {status: "Clear" , value: 22}]
-			$scope.$digest();      
-    });
-  });	
-
-	it('should create an svg element with its data', function(){
-	
+	it('weatherPieChart creates svg element and 3 arc segments', function(){
+		html = '<weather-pie-chart data="testData"></weather-pie-chart>'
+		data = [{status: "Cloudy" , value: 78}, {status: "Clear" , value: 22}]
+		compileElement(html,data)
+		expect(element.find('svg').length).toBe(1)
+		expect(element.find('g').length).toBe(3)
 	})
 
-	iit('should label the data with its value', function(){
-			$scope.testData = [{status: "Cloudy" , value: 78}, {status: "Clear" , value: 22}]
-			$scope.$digest();
-
-			console.log(elem) 
-
-			expect(elem.text()).toBe('Cloudy (78%)Clear (22%)')			
-
+	it('weatherPieCharts labels the data with its proper value', function(){
+		html = '<weather-pie-chart data="testData"></weather-pie-chart>'
+		data = [{status: "Cloudy" , value: 18}, {status: "Clear" , value: 82}]
+		compileElement(html,data)
+		expect(element.text()).toBe('Cloudy (18%)Clear (82%)')			
 	})	
-
-
-})
-
 
 /*********************************
-/Test Chart Directive
+/weatherLineChart Directive
 /********************************/
-describe('Test Directive', function(){
-
-	var $scope, elem, compiled, html;
-
-  beforeEach(function (){
-    module('d3');      
-    module('weatherDirectives');    
-    html = '<div my-test-directive></div>'; 
-    inject(function($compile, $rootScope) {
-      $scope = $rootScope;
-      elem = angular.element(html);
-      compiled = $compile(elem)($scope);
-      //$compile(elem)($scope);
-      //compiled($scope);
-			$scope.$digest();      
-    });
-  });	
-
-	it('should create an svg element with its data', function(){
-	
+	it('weatherLineChart creates an svg element with line and path elements', function(){
+		html = '<weather-line-chart data="testData" label="testLabel"></weather-line-chart>'
+		data = {"values":[[1393750560000,"48.9"],[1393754160000,"48.9"],[1393754160000,"48.9"]]}		
+		compileElement(html,data);
+		expect(element.find('path').length).toBe(3);
+		expect(element.find('line').length).toBe(12);
 	})
-
-	iit('should label the data with its value', function(){
-
-			$scope.$digest(); 
-			console.log(elem) 
-
-			//expect(elem.text()).toBe('Cloudy (78%)Clear (22%)')			
-
-	})	
-
 
 })
