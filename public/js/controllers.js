@@ -43,7 +43,7 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 			$scope.weatherSvc.getUserLocation().then(function(data){
 				$scope.coords = {lat:data.coords.latitude, lng:data.coords.longitude};
 				$scope.formData.location = $scope.coords.lat + "," + $scope.coords.lng;
-				$scope.formData.locationValidationMessage = "";
+				clearErrorMessages();
 			});
 		}
 
@@ -68,10 +68,14 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 		}
 
 		$scope.onLocationChange = function() {
-			//clear coords and the location err msg 
+			//clear coords and the location err msgs 
 			//when the user starts typing a location
 			$scope.coords = {};
-			$scope.formData.locationValidationMessage = "";
+			clearErrorMessages();
+		}
+
+		function clearErrorMessages() {
+			$scope.formData.locationValidationMessage = $scope.formData.geolocationErrorMessage = "";
 		}
 
 		$scope.validateDateRange = function () {
