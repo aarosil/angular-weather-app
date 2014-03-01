@@ -120,14 +120,16 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 				
 				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
 					$scope.graphStates = {}; //all graphs = show
-					// process observations
+					// since data returned as {time: time, field1: val1, field2, val2},
+					// create scop var for each field w/ array of {x: time, y: value},
+					// skipping the entries that are null
 					data.fields.forEach(function(field){
 						$scope.weatherData[field] = []
 						data.values.forEach(function(item){ 
 							if (typeof item[field] !== 'undefined') { $scope.weatherData[field].push({ x: item.time, y: item[field] }) }
 						})
 					})
-					// process daily summaries of each observation
+					// process daily summary observations
 					$scope.weatherData.avgdaycloudy = []
 					data.summary.forEach(function(item){
 						 $scope.weatherData.avgdaycloudy.push({ x: item.time, y: item.avgdaycloudy })
