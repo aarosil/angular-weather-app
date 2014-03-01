@@ -20,6 +20,7 @@ weatherControllers.controller('modalCtrl', ['$scope', '$modalInstance',
 weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 	function($scope, $modal, WeatherSvc) {
 
+
 		$scope.weatherSvc = WeatherSvc;
 		$scope.coords = {};
 		$scope.formData = {};
@@ -31,7 +32,8 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
   			{name: 'tempi', displayName: 'Temperature', order: 0},
   			{name: 'hum', displayName: 'Humidity', order: 1},
   			{name: 'precipi', displayName: 'Precipitation', order:2},
-  			{name: 'conds', displayName: 'Cloud Cover', order: 3}
+  			{name: 'conds', displayName: 'Cloud Cover', order: 3}, 
+  			{name: 'avgdaycloudy', displayName: 'Avg Daytime Cloud Cover', order: 4}
   		];
 
   		//used in raw data table to show human readable date
@@ -49,8 +51,7 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 
 		//listen for error message from GeoLocation service
 		$scope.$on('geolocation_error', function(event, message){
-			console.log(event)
-			$scope.formData.geolocationErrorMessage = message;
+			$scope.formData.geolocationErrorMessage = "Error: " + message + ".  Enter a location manually.";
 		})
 
 		$scope.parseUserLocation = function (loadWeather) {
@@ -61,7 +62,6 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 					$scope.coords = data;
 					if (loadWeather) {$scope.loadWeather();}
 				}, function (error) {
-					console.log("Error parsing user location: " + error);
 					$scope.formData.locationValidationMessage = "No matching locations";
 				})
 			}
@@ -117,14 +117,28 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 				var start = $scope.formData.historyStart.getTime()
 				var end = $scope.formData.historyEnd ? $scope.formData.historyEnd.getTime() : null
 
+				
 				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
 					$scope.graphStates = {}; //all graphs = show
-					$scope.weatherData = data[0];
-					var cloudy =  parseInt(100 * data[0].cloudyDaylightHours,10);
+					// process observations
+					data.fields.forEach(function(field){
+						$scope.weatherData[field] = []
+						data.values.forEach(function(item){ 
+							if (typeof item[field] !== 'undefined') { $scope.weatherData[field].push({ x: item.time, y: item[field] }) }
+						})
+					})
+					// process daily summaries of each observation
+					$scope.weatherData.avgdaycloudy = []
+					data.summary.forEach(function(item){
+						 $scope.weatherData.avgdaycloudy.push({ x: item.time, y: item.avgdaycloudy })
+					})
+					// calculate avg daily cloudiness over the duration
+					var cloudy = data.summary.reduce(function(a,b){return a + b.avgdaycloudy},0)/data.summary.length;	
 					$scope.weatherData.clouds = [ 
-							{status: "Cloudy" , value: cloudy},
-							{status: "Clear" , value: 100 - cloudy }
+							{status: "Cloudy" , value: cloudy.toFixed(1)},
+							{status: "Clear" , value: (100 - cloudy).toFixed(1) }
 						];
+					// visible the HTML
 					$scope.weatherMode = 'historical';
 				})
 

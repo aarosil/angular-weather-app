@@ -60,7 +60,6 @@ weatherServices.factory('Weather', ['$resource',
 			getHistorical: {
 				method: 'GET', 
 				url:'/history/:query/:startDate/:endDate', 
-				isArray:true,
 				params: {startDate: '@startDate', endDate: '@endDate'}
 			}
 		})

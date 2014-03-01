@@ -41,7 +41,7 @@
             
 	        <a class="btn btn-sm btn-default" data-ng-click="instructions()">Instructions</a>		
 	        <a class="btn btn-sm btn-default" data-ng-click="getLocation()">Retrieve Location Automatically</a>
-	        <p><span class="geolocate-error" >{{formData.geolocationErrorMessage}}</span>				
+	        <p><span class="geolocate-error" >{{formData.geolocationErrorMessage}}</span></p>				
 
 		</div>
 		<div class="col-lg-8">
@@ -70,9 +70,9 @@
 											<th>Timestamp</th>
 											<th>Value</th>							
 										</tr>	
-										<tr data-ng-repeat="row in weatherData[o.name].values">
-											<td>{{date.(row[0]).toUTCString()}}</td>
-											<td>{{row[1]}}</td>
+										<tr data-ng-repeat="row in weatherData[o.name]">
+											<td>{{date(row.x).toUTCString()}}</td>
+											<td>{{row.y}}</td>
 										</tr>									
 									</tbody>
 								</table>						
@@ -125,8 +125,5 @@
 
 			</div>			
 		</div>
-	</div>
-	<div data-ng-show="weatherData.debug"
-		<pre>{{weatherData}}</pre>
 	</div>
 </div>

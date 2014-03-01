@@ -18,26 +18,16 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 					$window.onresize = function() {
 						scope.$apply();
 					}
-
 					
 					scope.$watch(function(){
 						return angular.element($window)[0].innerWidth;
 					}, function() {
-						scope.processData(scope.data);
+						scope.render(scope.data);
 					});
 		
 					scope.$watch('data', function(newVals, oldVals) {
-					  return scope.processData(newVals);
+					  return scope.render(newVals);
 					}, true);					
-
-					scope.processData = function(data){
-						if (typeof data !== 'undefined') {
-							if (typeof data.values !== 'undefined') {
-								var data = $window._.map(data.values, (function(item){return {"x": item[0], "y":item[1]}}))
-								scope.render(data)	
-							} 
-						}
-					}
 
 					scope.render = function(data) {
 						svg.selectAll('*').remove();

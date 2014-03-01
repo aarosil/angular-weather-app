@@ -1,6 +1,7 @@
 var async = require('async');
 
 var WeatherUndergroundClient = require('./apiclient/wunderground');
+var wuResponse = require('./apiclient/wuResponse')
 var GoogleMapsClient = require('./apiclient/geocode');
 var util = require('./util/weather-util');
 
@@ -22,7 +23,7 @@ exports.getCurrentWeather = function(req,res) {
 			res.send("An Error Occurred: " + query)
 		}
 		var json = JSON.parse(data);
-		res.send(util.processWUCurrentConditions(json));
+		res.send(wuResponse(json));
 	})
 }
 
@@ -33,31 +34,23 @@ exports.getHistory = function(req,res) {
 	var query = req.params.query;
 	var requestedDates = util.formatDatesWU(req.params.startDate,req.params.endDate);
 	var fieldsToCapture = ['tempi','hum','pressurei','precipi','fog','rain','snow', 'conds'];
-	var responseData = [];
-
+	var responses = [];
 	//weather underground returns at most 1 day of observations
 	//so asynchronously process the requested dates one by one
 	async.forEach(requestedDates, function(date, callback){
 		wu.history(query, date, function (err,data){
-			if (err) { callback({"error": ' WeatherUnderground call failed: ' + err}) }
-
-			var jsonData = JSON.parse(data)
-			if (jsonData.hasOwnProperty('history')) {
-				responseData.push(util.processWUDailyObservations(jsonData.history, fieldsToCapture));
-				//notify async processing is completed
+			if (!err) { 
+				responses.push(JSON.parse(data))
 				callback();
 			} else {
-				//callback({"error": ' no observations returned from query ' + query});
-				return
+				callback({"error": ' WeatherUnderground call failed: ' + err}) 
 			}
 		});
-
 	//callback for when all of async's tasks are completed
 	}, function(err) {
 		if (!err) {
-			var masterResponse = util.sortAndConcatWUResponses(responseData, fieldsToCapture);
-			masterResponse.cloudyDaylightHours = util.cloudyDaylightHours(masterResponse, query);
-			res.send([masterResponse])
+			var response = wuResponse(responses,fieldsToCapture,query)
+			res.send(response)
 
 		} else {
 			console.log(err);
