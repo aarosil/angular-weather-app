@@ -48,6 +48,10 @@ wuResponse.processData = function(data, fields, location) {
 					}  else {
 						entry[field]= Number(obs[field]);
 					}
+				} else {
+					// otherwise would have to filter later
+					// because D3 cannot handle null values 
+					entry[field] = 0;
 				}
 				
 			})
