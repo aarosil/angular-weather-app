@@ -60,7 +60,7 @@ describe('d3 Directives', function(){
 /********************************/
 	it('weatherLineChart creates an svg element with line and path elements', function(){
 		html = '<weather-line-chart data="testData" label="testLabel"></weather-line-chart>'
-		data = {"values":[[1393750560000,"48.9"],[1393754160000,"48.9"],[1393754160000,"48.9"]]}		
+		data = [{"x": 1393750560000, "y":48.9},{ "x":1393754160000, "y": 48.9},{"x": 1393754160000, "y":48.9}]
 		compileElement(html,data);
 		expect(element.find('path').length).toBe(3);
 		expect(element.find('line').length).toBe(12);
