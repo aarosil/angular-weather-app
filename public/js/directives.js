@@ -5,8 +5,9 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 		return {
 			restrict: 'EA', 
 			scope: {
-				data: '=',
-				label: '='
+				data: '=',  // data format is {time: time, field1: val1, field2, val2, ...},
+				key: '=', 	// so 'key' attr on chart tells what key to graph
+				label: '='	// so label is the human-reabable name for the key
 			},
 			link: function(scope, ele, attrs) {
 				d3Service.d3().then(function(d3) {
@@ -31,7 +32,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 
 					scope.render = function(data) {
 						svg.selectAll('*').remove();
-						
+						var key = scope.key
 						if(!data) return;						
 						
 						var elemWidth = svg.node().offsetWidth||450;
@@ -44,7 +45,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						    .range([0, width]);
 
 						var y = d3.scale.linear()
-						    .domain([d3.min(data, function(d){return d.y}),d3.max(data, function(d){return d.y})])
+						    .domain([d3.min(data, function(d){return d[key]}),d3.max(data, function(d){return d[key]})])
 						    .rangeRound([height, 0]);
 						    
 
@@ -58,8 +59,8 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						 	.orient("left");
 
 						var line = d3.svg.line()
-						    .x(function(d) { return x(d.x); })
-						    .y(function(d) { return y(d.y); });
+						    .x(function(d) { return x(d.time); })
+						    .y(function(d) { return y(d[key]); });
 
 						svg.attr("width", parseInt(width) + margin.left + margin.right)
 							.attr("height", height + margin.top + margin.bottom)
@@ -67,8 +68,8 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 							.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-						x.domain(d3.extent(data, function(d) { return d.x; }));
-						y.domain(d3.extent(data, function(d) { return d.y; }));
+						x.domain(d3.extent(data, function(d) { return d.time; }));
+						y.domain(d3.extent(data, function(d) { return d[key]; }));
 
 						svg.append("g")
 							.attr("class", "x axis")
