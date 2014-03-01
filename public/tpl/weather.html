@@ -52,7 +52,7 @@
 					
 					<div class="list-group">
 						<!-- repeat a list group item for regular graph metrics -->
-						<div class="list-group-item" data-ng-repeat="o in displayNames">  
+						<div class="list-group-item" data-ng-repeat="o in displayNames.observation">  
 							<div class="list-group-item-heading">
 								<span class="data-heading">{{o.displayName}}	</span>
 								<span class="data-expand-link" style="float: right">
@@ -61,7 +61,7 @@
 								</span>
 							</div>
 							<div data-ng-show="!graphStates[o.name]">
-								<weather-line-chart data="weatherData[o.name]" label="o.displayName"></weather-line-chart>
+								<weather-line-chart data="weatherData.observations" label="o.displayName" key="o.name"></weather-line-chart>
 							</div>
 							<div data-ng-show="rawStates[o.name]">
 								<table class="table table-striped">
@@ -70,24 +70,51 @@
 											<th>Timestamp</th>
 											<th>Value</th>							
 										</tr>	
-										<tr data-ng-repeat="row in weatherData[o.name]">
-											<td>{{date(row.x).toUTCString()}}</td>
-											<td>{{row.y}}</td>
+										<tr data-ng-repeat="row in weatherData.observations">
+											<td>{{date(row.time).toUTCString()}}</td>
+											<td>{{row[o.name]}}</td>
 										</tr>									
 									</tbody>
 								</table>						
 							</div>							
 						</div>
+						<!-- another list group item for summary data graphs -->
+						<div class="list-group-item" data-ng-repeat="o in displayNames.summary">  
+							<div class="list-group-item-heading">
+								<span class="data-heading">{{o.displayName}}	</span>
+								<span class="data-expand-link" style="float: right">
+									<a data-ng-click="rawStates[o.name] = !rawStates[o.name]">{{(!rawStates[o.name] ? 'Show' : 'Hide')}} Data</a>
+									<a data-ng-click="graphStates[o.name] = !graphStates[o.name]">{{(graphStates[o.name] ? 'Show' : 'Hide')}} Graph</a>
+								</span>
+							</div>
+							<div data-ng-show="!graphStates[o.name]">
+								<weather-line-chart data="weatherData.summary" label="o.displayName" key="o.name"></weather-line-chart>
+							</div>
+							<div data-ng-show="rawStates[o.name]">
+								<table class="table table-striped">
+									<tbody class="rawdata-table"> 	
+										<tr>
+											<th>Timestamp</th>
+											<th>Value</th>							
+										</tr>	
+										<tr data-ng-repeat="row in weatherData.summary">
+											<td>{{date(row.time).toUTCString()}}</td>
+											<td>{{row[o.name]}}</td>
+										</tr>									
+									</tbody>
+								</table>						
+							</div>							
+						</div>						
 						<!-- one off for pie chart cloudiness -->
 						<div class="list-group-item">
 							<div class="list-group-item-heading">
-								<span class="data-heading">Average Daytime Cloudiness	</span>
+								<span class="data-heading">Total Average Daytime Cloud Cover</span>
 								<span class="data-expand-link" style="float: right">
 									<a data-ng-click="graphStates['avgcloud'] = !graphStates['avgcloud']">{{(graphStates['avgcloud'] ? 'Show' : 'Hide')}} Graph</a>
 								</span>
 							</div>
 							<div data-ng-show="!graphStates['avgcloud']">
-								<weather-pie-chart data="weatherData.clouds"></weather-pie-chart>
+								<weather-pie-chart data="weatherData.totals.clouds"></weather-pie-chart>
 							</div>						
 						</div>
 

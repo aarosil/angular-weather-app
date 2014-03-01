@@ -20,7 +20,6 @@ weatherControllers.controller('modalCtrl', ['$scope', '$modalInstance',
 weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 	function($scope, $modal, WeatherSvc) {
 
-
 		$scope.weatherSvc = WeatherSvc;
 		$scope.coords = {};
 		$scope.formData = {};
@@ -28,13 +27,17 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
   		$scope.format = 'yyyy/MM/dd';
   		$scope.graphStates = {}; //store collapse/open state of graphs
   		$scope.rawStates = {}; //store collapse/open state of raw data
-  		$scope.displayNames = [
-  			{name: 'tempi', displayName: 'Temperature', order: 0},
-  			{name: 'hum', displayName: 'Humidity', order: 1},
-  			{name: 'precipi', displayName: 'Precipitation', order:2},
-  			{name: 'conds', displayName: 'Cloud Cover', order: 3}, 
-  			{name: 'avgdaycloudy', displayName: 'Avg Daytime Cloud Cover', order: 4}
-  		];
+  		$scope.displayNames = { // automatically display the 
+  			observation: [		// correct name in charts	
+	  			{name: 'tempi', displayName: 'Temperature', order: 0},
+	  			{name: 'hum', displayName: 'Humidity', order: 1},
+	  			{name: 'precipi', displayName: 'Precipitation', order:2},
+	  			{name: 'conds', displayName: 'Cloud Cover', order: 3},   			
+  			], 
+  			summary: [
+  				{name: 'avgdaycloudy', displayName: 'Avg Daytime Cloud Cover', order: 0}
+  			]
+  		};
 
   		//used in raw data table to show human readable date
   		$scope.date = function(date) {return new Date(date);}
@@ -117,32 +120,19 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 				var start = $scope.formData.historyStart.getTime()
 				var end = $scope.formData.historyEnd ? $scope.formData.historyEnd.getTime() : null
 
-				
 				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
 					$scope.graphStates = {}; //all graphs = show
-					// since data returned as {time: time, field1: val1, field2, val2},
-					// create scop var for each field w/ array of {x: time, y: value},
-					// skipping the entries that are null
-					data.fields.forEach(function(field){
-						$scope.weatherData[field] = []
-						data.values.forEach(function(item){ 
-							if (typeof item[field] !== 'undefined') { $scope.weatherData[field].push({ x: item.time, y: item[field] }) }
-						})
-					})
-					// process daily summary observations
-					$scope.weatherData.avgdaycloudy = []
-					data.summary.forEach(function(item){
-						 $scope.weatherData.avgdaycloudy.push({ x: item.time, y: item.avgdaycloudy })
-					})
+					$scope.weatherData.observations = data.values // contains data for all observations
+					$scope.weatherData.summary = data.summary // contains any precalculated summary data
 					// calculate avg daily cloudiness over the duration
-					var cloudy = data.summary.reduce(function(a,b){return a + b.avgdaycloudy},0)/data.summary.length;	
-					$scope.weatherData.clouds = [ 
-							{status: "Cloudy" , value: cloudy.toFixed(1)},
-							{status: "Clear" , value: (100 - cloudy).toFixed(1) }
-						];
-					// visible the HTML
+					var cloudyTotal = data.summary.reduce(function(a,b){return a + b.avgdaycloudy},0)/data.summary.length;	
+					$scope.weatherData.totals = {clouds: [ 
+													{status: "Cloudy" , value: cloudyTotal.toFixed(1)},
+													{status: "Clear" , value: (100 - cloudyTotal).toFixed(1) }
+												]};
+					// make visible the HTML
 					$scope.weatherMode = 'historical';
-				})
+				})				
 
 			//no dates entered, so get current weather for the location
 			} else {
