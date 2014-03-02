@@ -27,20 +27,35 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
   		$scope.format = 'yyyy/MM/dd';
   		$scope.graphStates = {}; //store collapse/open state of graphs
   		$scope.rawStates = {}; //store collapse/open state of raw data
-  		$scope.displayNames = { // automatically display the 
-  			observation: [		// correct name in charts	
-	  			{name: 'tempi', displayName: 'Temperature', order: 0},
-	  			{name: 'hum', displayName: 'Humidity', order: 1},
-	  			{name: 'precipi', displayName: 'Precipitation', order:2},
-	  			{name: 'conds', displayName: 'Cloud Cover', order: 3},   			
-  			], 
-  			summary: [
-  				{name: 'avgdaycloudy', displayName: 'Avg Daytime Cloud Cover', order: 0}
-  			]
+  		$scope.dataFields = {  
+  			observation: {	// automatically display the correct name in charts	
+	  			tempi: {name: 'tempi', displayName: 'Temperature', order: 0, active: true},
+	  			hum: {name: 'hum', displayName: 'Humidity', order: 3, active: false},
+	  			precipi: {name: 'precipi', displayName: 'Precipitation', order:2, active: false},
+	  			conds: {name: 'conds', displayName: 'Cloud Cover', order: 1, active: true},  
+	  			dewpti: {name: 'dewpti', displayName: 'Dewpoint', order: 4, active: false},
+	  			wspdi: {name: 'wspdi', displayName: 'Wind Speed', order: 5, active: false},
+	  			pressurei: {name: 'pressurei', displayName: 'Pressure', order: 6, active: false} 	 			
+  			}, 
+  			summary: {
+  				day_conds: {name: 'day_conds', displayName: 'Avg Daytime Cloud Cover', order: 0, active: true},
+	  			avg_tempi: {name: 'tempi', displayName: 'Avg Temperature', order: 2, active: false},
+	  			avg_hum: {name: 'hum', displayName: 'Avg Humidity', order: 4, active: false},
+	  			avg_precipi: {name: 'precipi', displayName: 'Avg Precipitation', order:3, active: false},
+	  			avg_conds: {name: 'conds', displayName: 'Avg Cloud Cover', order: 1, active: false},  
+	  			avg_dewpti: {name: 'dewpti', displayName: 'Avg Dewpoint', order: 5, active: false},
+	  			avg_wspdi: {name: 'wspdi', displayName: 'Avg Wind Speed', order: 6, active: false},
+	  			avg_pressurei: {name: 'pressurei', displayName: 'Avg Pressure', order: 7, active: false} 		  				
+  			}
   		};
 
   		//used in raw data table to show human readable date
   		$scope.date = function(date) {return new Date(date);}
+  		// used to translate key to display name 
+  		// key will be a prop. of either display or observation
+  		$scope.getName = function(key) { 
+			return $scope.dataFields.observation.hasOwnProperty(key) ? $scope.dataFields.observation[key].displayName : $scope.dataFields.summary[key].displayName
+  		}
 
 		$scope.getLocation = function () {
 			//get user coordinates using  HTML5 GeoLocation API in Browser
@@ -101,7 +116,6 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 			}
 
 			$scope.formData.dateValidationMessage = validate($scope.formData.historyStart, $scope.formData.historyEnd);
-	
 		}
 
 		$scope.loadWeather = function () {
@@ -120,12 +134,31 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 				var start = $scope.formData.historyStart.getTime()
 				var end = $scope.formData.historyEnd ? $scope.formData.historyEnd.getTime() : null
 
-				$scope.weatherSvc.getHistoricalWeather({query: query, startDate: start, endDate: end}).then(function(data){
+				var fields = [];
+				for (key in $scope.dataFields.observation) {
+					if ($scope.dataFields.observation[key].active === true) {
+						fields.push($scope.dataFields.observation[key].name)
+					} 
+				}
+				var summaryFields = [];				
+				for (key in $scope.dataFields.summary) {
+					if ($scope.dataFields.summary[key].active === true && key!=='day_conds') {
+						summaryFields.push($scope.dataFields.summary[key].name)
+					} 
+				}
+
+				var request = {
+					query: query, 
+					startDate: start, 
+					endDate: end, 
+					fields: fields.join(','),
+					summaryFields: summaryFields.join(',')
+				}
+				$scope.weatherSvc.getHistoricalWeather(request).then(function(data){
 					$scope.graphStates = {}; //all graphs = show
-					$scope.weatherData.observations = data.values // contains data for all observations
-					$scope.weatherData.summary = data.summary // contains any precalculated summary data
+					$scope.weatherData = data
 					// calculate avg daily cloudiness over the duration
-					var cloudyTotal = data.summary.reduce(function(a,b){return a + b.avgdaycloudy},0)/data.summary.length;	
+					var cloudyTotal = data.summary.reduce(function(a,b){return a + b.day_conds},0)/data.summary.length;	
 					$scope.weatherData.totals = {clouds: [ 
 													{status: "Cloudy" , value: cloudyTotal.toFixed(1)},
 													{status: "Clear" , value: (100 - cloudyTotal).toFixed(1) }

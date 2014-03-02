@@ -10,7 +10,7 @@
 			<div class="well well-sm">
 			<form class="form-horizontal" role="form">
 	            <div class="form-group">
-	                <label for="id" class="col-lg-4 control-label">Location:</label>
+	                <label for="location" class="col-lg-4 control-label">Location:</label>
 	                <div class="col-lg-8">
 	                <input class="form-control input-sm" data-ng-model="formData.location" type="text" data-ng-change="onLocationChange()" data-ng-blur="parseUserLocation()">
 	                
@@ -20,21 +20,42 @@
 	            </div>
 
 	            <div class="form-group">
-	                <label for="name" class="col-lg-4 control-label">Start Date:</label>
+	                <label for="start" class="col-lg-4 control-label">Start Date:</label>
 	                <div class="col-lg-8">                
 	                <input class="form-control input-sm" datepicker-popup="{{format}}" ng-model="formData.historyStart"  datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" type="text" data-ng-change="validateDateRange()">
 	                </div>
 	            </div>	
 
 	            <div class="form-group">
-	                <label for="name" class="col-lg-4 control-label">End Date:</label>
+	                <label for="end" class="col-lg-4 control-label">End Date:</label>
 	                <div class="col-lg-8">       
 	                <input class="form-control input-sm" datepicker-popup="{{format}}" ng-model="formData.historyEnd" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" type="text" data-ng-change="validateDateRange()">
-	                
 	                <span class="form-validation-msg" >{{formData.dateValidationMessage}}</span>
-	                
 	                </div>
 	            </div>	
+
+                <div class="form-group">
+                	<label for="name" class="col-lg-4 control-label">Data:</label>
+                    <div class="col-lg-8">
+                      <div class="checkbox" data-ng-repeat="(key, keyConfig) in dataFields.observation | object2Array |orderBy:'order'">
+                        <label>                  
+                          <input type="checkbox" data-ng-disabled="keyConfig.name==='conds'||keyConfig.name==='tempi'" data-ng-model="keyConfig.active" ng-checked="keyConfig.active">{{keyConfig.displayName}} 
+                        </label>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                	<label for="name" class="col-lg-4 control-label">Daily Averages:</label>
+                    <div class="col-lg-8">
+                      <div class="checkbox" data-ng-repeat="(key, keyConfig) in dataFields.summary | object2Array |orderBy:'order'">
+                        <label>                  
+                          <input type="checkbox" data-ng-disabled="keyConfig.name==='day_conds'" data-ng-model="keyConfig.active" ng-checked="keyConfig.active">{{keyConfig.displayName}} 
+                        </label>
+                      </div>
+                    </div>
+                </div>                
+
         	</form>
         	<a class="btn btn-sm btn-primary" data-ng-click="loadWeather()" data-ng-disabled="!formData.location||formData.locationValidationMessage||formData.dateValidationMessage">Load Data</a>
         	</div>
@@ -47,23 +68,23 @@
 		<div class="col-lg-8">
 			<div data-ng-switch on="weatherMode">
 				<div data-ng-switch-when="historical">
-					<h4>Historical Weather Data for {{formData.location}}</h4>
+					<h3>Historical Weather Data for {{formData.location}}</h3>
 					<p><b>Date Range:</b> {{formData.historyStart.toDateString()}} <span data-ng-show="formData.historyEnd"> to {{formData.historyEnd.toDateString()}}</span></p>
-					
 					<div class="list-group">
 						<!-- repeat a list group item for regular graph metrics -->
-						<div class="list-group-item" data-ng-repeat="o in displayNames.observation">  
+						<h4>Observations:</h4>
+						<div class="list-group-item" data-ng-repeat="name in weatherData.fields">
 							<div class="list-group-item-heading">
-								<span class="data-heading">{{o.displayName}}	</span>
+								<span class="data-heading">{{getName(name)}}</span>
 								<span class="data-expand-link" style="float: right">
-									<a data-ng-click="rawStates[o.name] = !rawStates[o.name]">{{(!rawStates[o.name] ? 'Show' : 'Hide')}} Data</a>
-									<a data-ng-click="graphStates[o.name] = !graphStates[o.name]">{{(graphStates[o.name] ? 'Show' : 'Hide')}} Graph</a>
+									<a data-ng-click="rawStates[name] = !rawStates[name]">{{(!rawStates[name] ? 'Show' : 'Hide')}} Data</a>
+									<a data-ng-click="graphStates[name] = !graphStates[name]">{{(graphStates[name] ? 'Show' : 'Hide')}} Graph</a>
 								</span>
 							</div>
-							<div data-ng-show="!graphStates[o.name]">
-								<weather-line-chart data="weatherData.observations" label="o.displayName" key="o.name"></weather-line-chart>
+							<div data-ng-show="!graphStates[name]">
+								<weather-line-chart data="weatherData.observations" label="getName(name)" key="name"></weather-line-chart>
 							</div>
-							<div data-ng-show="rawStates[o.name]">
+							<div data-ng-show="rawStates[name]">
 								<table class="table table-striped">
 									<tbody class="rawdata-table"> 	
 										<tr>
@@ -72,25 +93,26 @@
 										</tr>	
 										<tr data-ng-repeat="row in weatherData.observations">
 											<td>{{date(row.time).toUTCString()}}</td>
-											<td>{{row[o.name]}}</td>
+											<td>{{row[name]}}</td>
 										</tr>									
 									</tbody>
 								</table>						
 							</div>							
 						</div>
-						<!-- another list group item for summary data graphs -->
-						<div class="list-group-item" data-ng-repeat="o in displayNames.summary">  
+						<!-- repeat another list group item for summary data graphs -->
+						<h4>Daily Averages:</h4>
+						<div class="list-group-item" data-ng-repeat="name in weatherData.summaryFields">  
 							<div class="list-group-item-heading">
-								<span class="data-heading">{{o.displayName}}	</span>
+								<span class="data-heading">{{getName(name)}}</span>
 								<span class="data-expand-link" style="float: right">
-									<a data-ng-click="rawStates[o.name] = !rawStates[o.name]">{{(!rawStates[o.name] ? 'Show' : 'Hide')}} Data</a>
-									<a data-ng-click="graphStates[o.name] = !graphStates[o.name]">{{(graphStates[o.name] ? 'Show' : 'Hide')}} Graph</a>
+									<a data-ng-click="rawStates[name] = !rawStates[name]">{{(!rawStates[name] ? 'Show' : 'Hide')}} Data</a>
+									<a data-ng-click="graphStates[name] = !graphStates[name]">{{(graphStates[name] ? 'Show' : 'Hide')}} Graph</a>
 								</span>
 							</div>
-							<div data-ng-show="!graphStates[o.name]">
-								<weather-line-chart data="weatherData.summary" label="o.displayName" key="o.name"></weather-line-chart>
+							<div data-ng-show="!graphStates[name]">
+								<weather-line-chart data="weatherData.summary" label="getName(name)" key="name"></weather-line-chart>
 							</div>
-							<div data-ng-show="rawStates[o.name]">
+							<div data-ng-show="rawStates[name]">
 								<table class="table table-striped">
 									<tbody class="rawdata-table"> 	
 										<tr>
@@ -99,13 +121,14 @@
 										</tr>	
 										<tr data-ng-repeat="row in weatherData.summary">
 											<td>{{date(row.time).toUTCString()}}</td>
-											<td>{{row[o.name]}}</td>
+											<td>{{row[name]}}</td>
 										</tr>									
 									</tbody>
 								</table>						
 							</div>							
-						</div>						
+						</div>			
 						<!-- one off for pie chart cloudiness -->
+						<h4>Totals:</h4>			
 						<div class="list-group-item">
 							<div class="list-group-item-heading">
 								<span class="data-heading">Total Average Daytime Cloud Cover</span>
@@ -154,3 +177,4 @@
 		</div>
 	</div>
 </div>
+{{weatherData}}

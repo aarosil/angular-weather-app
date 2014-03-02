@@ -9,7 +9,7 @@ var WUApiKey = 'a9b08241c785e5ee';
 var rateCount = 10;
 var ratePeriod = 'minute';
 
-var wu = new WeatherUndergroundClient(WUApiKey, true, rateCount, ratePeriod);
+var wu = new WeatherUndergroundClient(WUApiKey, false, rateCount, ratePeriod);
 var geocode = new GoogleMapsClient(true);
 
 //use weather underground to get current 
@@ -33,7 +33,10 @@ exports.getCurrentWeather = function(req,res) {
 exports.getHistory = function(req,res) {
 	var query = req.params.query;
 	var requestedDates = util.formatDatesWU(req.params.startDate,req.params.endDate);
-	var fieldsToCapture = ['tempi','hum','pressurei','precipi','fog','rain','snow', 'conds'];
+	if (req.query.summaryFields) {
+		var summaryFields = req.query.summaryFields.split(',')
+	}
+	var fieldsToCapture = req.query.fields.split(',')
 	var responses = [];
 	//weather underground returns at most 1 day of observations
 	//so asynchronously process the requested dates one by one
@@ -49,7 +52,7 @@ exports.getHistory = function(req,res) {
 	//callback for when all of async's tasks are completed
 	}, function(err) {
 		if (!err) {
-			var response = wuResponse(responses,fieldsToCapture,query)
+			var response = wuResponse(responses,fieldsToCapture,query,summaryFields)
 			res.send(response)
 
 		} else {
