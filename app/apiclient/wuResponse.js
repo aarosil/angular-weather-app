@@ -13,7 +13,7 @@ wuResponse.processData = function(data, fields, location, summaryFields) {
 	if (!data||!fields||!location) return;
 
 	// data is a single day's collection of observations
-    if (typeof data === 'object' && data.hasOwnProperty('history') && data.history.observations.length !== 0) {
+    if (typeof data === 'object' && data.hasOwnProperty('history') && data.history.observations.length > 0) {
 
 		var observations = data.history.observations;
 		var response = { 
@@ -32,14 +32,17 @@ wuResponse.processData = function(data, fields, location, summaryFields) {
         var dayObs = 0;
         var dayCloudyObs = 0;
         // hold totals if any summary requested
-        var totals = {};
+        // count # obs. in case any were invalid
+        var total = {};
+        var count = {};
 		//go through all observations for the day
 		_.each(observations, function(obs){
-			var entry = {}
+			var entry = {};
+			var value;
 			entry.time = new Date(obs.date.year, parseInt(obs.date.mon, 10)-1, obs.date.mday, obs.date.hour, obs.date.min).getTime();
+			
 			//add each field as a property of the entry
 			_.each(fields, function(field){
-                var value;
 				if (field === 'conds') { 
 					// map condition value to equivalent cloud coverage
 					value = wuSkyConditionsMap(obs[field]) 
@@ -52,11 +55,23 @@ wuResponse.processData = function(data, fields, location, summaryFields) {
 					value = reject(obs[field]) ? 0 : Number(obs[field]);
 				}
 				entry[field] = value;
-				if (summaryFields && summaryFields.indexOf(field) !== -1) { 
-					if (!totals[field]) {totals[field]=0 }
-					totals[field] += value
-				}
 			})
+			
+			// add to totals for each summary fields 
+			_.each(summaryFields, function(field){
+				if (field === 'conds') { 
+					value = wuSkyConditionsMap(obs[field]) 
+				} else {
+				value = reject(obs[field]) ? 0 : Number(obs[field]);
+				}
+				if (!total[field]) {
+					total[field]=0 
+					count[field]=0
+				}
+				total[field] += value;
+				count[field] += 1;										
+			})
+
 			response.observations.push(entry)
 		})	
 
@@ -65,15 +80,13 @@ wuResponse.processData = function(data, fields, location, summaryFields) {
         _.each(summaryFields, function(field){
         	var name = 'avg_' + field
         	response.summaryFields.push(name)
-        	response.summaryData[name] = totals[field]/response.observations.length
+        	response.summaryData[name] = total[field]/count[field]
         })
         // calculate avg daytime cloudiness for the day. 
         var avgClouds = (dayCloudyObs/dayObs)||0        
         response.summaryFields.push('day_conds')
         response.summaryData.day_conds = avgClouds.toFixed(3) * 100;
-
 		return response;	
-
  	}
 
     // data is an array of daily observations responses

@@ -92,7 +92,7 @@
 											<th>Value</th>							
 										</tr>	
 										<tr data-ng-repeat="row in weatherData.observations">
-											<td>{{date(row.time).toUTCString()}}</td>
+											<td>{{date(row.time).toString()}}</td>
 											<td>{{row[name]}}</td>
 										</tr>									
 									</tbody>
@@ -120,7 +120,7 @@
 											<th>Value</th>							
 										</tr>	
 										<tr data-ng-repeat="row in weatherData.summary">
-											<td>{{date(row.time).toUTCString()}}</td>
+											<td>{{date(row.time).toString()}}</td>
 											<td>{{row[name]}}</td>
 										</tr>									
 									</tbody>
@@ -172,7 +172,6 @@
 						</tbody>
 					</table>
 				</div>
-
 			</div>			
 		</div>
 	</div>

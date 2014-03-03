@@ -10,7 +10,7 @@ module.exports = function(config){
       'public/lib/d3.v3.js',
       'public/js/**/*.js',      
       'test/lib/angular/angular-mocks.js',
-      'test/unit/**/*.js'
+      'test/unit/angular/*.js'
     ],
 
     autoWatch : true,

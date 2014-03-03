@@ -10,7 +10,7 @@ var rateCount = 10;
 var ratePeriod = 'minute';
 
 var wu = new WeatherUndergroundClient(WUApiKey, false, rateCount, ratePeriod);
-var geocode = new GoogleMapsClient(true);
+var geocode = new GoogleMapsClient(false);
 
 //use weather underground to get current 
 //weather conditions of a location
