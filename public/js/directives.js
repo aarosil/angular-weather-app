@@ -35,7 +35,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						var key = scope.key
 						if(!data) return;						
 						
-						var elemWidth = svg.node().offsetWidth||450;
+						var elemWidth = ele[0].offsetWidth;
 						var margin = {top: 20, right: 20, bottom: 30, left: 50},
 						    width =  parseInt(elemWidth,10) - margin.left - margin.right,
 						    height = 200 - margin.top - margin.bottom;
@@ -111,7 +111,7 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 					
 					var svg = d3.select(ele[0])
 						.append('svg:svg')
-						.style('width', '100%');
+						.style('width', '100%')
 
 					$window.onresize = function() {
 						scope.$apply();
@@ -133,7 +133,7 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 
 						if(!data) return;						
 
-						var elemWidth = svg.node().offsetWidth||450;
+						var elemWidth = ele[0].offsetWidth;
 						var width =  elemWidth;
 						var height = 200 ;					
 						var radius = Math.min(width, height) / 2;
