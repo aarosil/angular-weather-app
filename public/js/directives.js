@@ -176,3 +176,120 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 			}
 		}
 	}]);
+
+weatherDirectives.directive('weatherSpinnerGif', ['$q', '$timeout', '$window', 'weatherHttpInterceptor',
+	function($q, $timeout, $window, weatherHttpInterceptor){
+		return {
+			restrict: 'EA', 
+			transclude: true, 
+			scope: {
+				delay: '@'
+			},
+            template: '<div id="overlay-container" class="overlayContainer">' +
+                            '<div id="overlay-background" class="overlayBackground"></div>' +
+                            '<div id="overlay-content" class="overlayContent" data-ng-transclude>' +
+                            '</div>' +
+                        '</div>',
+
+			link: function (scope, ele, attrs) {
+
+				var overlayContainer = null;
+				var timerPromise = null;
+				var timerPromiseHide = null;
+				var inSession = false;
+				var queue = [];
+
+				overlayContainer = document.getElementById('overlay-container');
+
+				weatherHttpInterceptor.request = function(config) {
+					processRequest();
+					return config || $q.when(config);
+				}
+
+				weatherHttpInterceptor.requestError = function(rejection){
+					processRequest();
+					return $q.reject(rejection);
+				}
+				weatherHttpInterceptor.response = function (response) {
+					processResponse();
+					return response || $q.when(response);
+				},
+				weatherHttpInterceptor.responseError = function(rejection){
+					processResponse();
+					return $q.reject(rejection)
+				}
+
+
+				function processRequest() {
+					queue.push({});
+					if (queue.length == 1) {
+						timerPromise = $timeout(function () {
+							if (queue.length) showOverlay();
+						}, scope.delay ? scope.delay : 500); //Delay showing to avoid flicker
+					}
+				}
+
+				function processResponse() {
+					queue.pop();
+					if (queue.length == 0) {
+						timerPromiseHide = $timeout(function () {
+							if (queue.length == 0) {
+								hideOverlay();
+								if (timerPromiseHide) $timeout.cancel(timerPromiseHide);
+							}
+						}, scope.delay ? scope.delay : 500);
+					}
+				}
+
+				function showOverlay() {
+                    var w = 0;
+                    var h = 0;
+                    if (!$window.innerWidth) {
+                        if (!(document.documentElement.clientWidth == 0)) {
+                            w = document.documentElement.clientWidth;
+                            h = document.documentElement.clientHeight;
+                        }
+                        else {
+                            w = document.body.clientWidth;
+                            h = document.body.clientHeight;
+                        }
+                    }
+                    else {
+                        w = $window.innerWidth;
+                        h = $window.innerHeight;
+                    }
+                    var content = document.getElementById('overlay-content');
+                    var contentWidth = parseInt(getComputedStyle(content, 'width').replace('px', ''));
+                    var contentHeight = parseInt(getComputedStyle(content, 'height').replace('px', ''));
+
+                    content.style.top = h / 2 - contentHeight / 2 + 'px';
+                    content.style.left = w / 2 - contentWidth / 2 + 'px'
+
+
+					overlayContainer.style.display = 'block';
+				}
+
+				function hideOverlay() {
+					if (timerPromise) $timeout.cancel(timerPromise);
+					overlayContainer.style.display = 'none';
+				}
+
+                var getComputedStyle = function () {
+                    var func = null;
+                    if (document.defaultView && document.defaultView.getComputedStyle) {
+                        func = document.defaultView.getComputedStyle;
+                    } else if (typeof (document.body.currentStyle) !== "undefined") {
+                        func = function (element, anything) {
+                            return element["currentStyle"];
+                        };
+                    }
+
+                    return function (element, style) {
+                        return func(element, null)[style];
+                    }
+                }();
+
+			}
+		}	
+
+	}])

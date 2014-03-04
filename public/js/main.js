@@ -29,7 +29,8 @@ weatherApp.config(['$routeProvider',
 			})
 	}]);
 
-
+// translates object to an array so
+// we can use ngRepeat orderBy on it
 weatherApp.filter('object2Array', function() {
 	return function(input) {
 		var out = []; 
@@ -39,3 +40,13 @@ weatherApp.filter('object2Array', function() {
 		return out;
 	}
 })
+
+// inject a blank HTTP interceptor that
+// will be configured by spinGif directive
+weatherApp.config(['$provide', '$httpProvider', 
+	function($provide, $httpProvider){
+		$provide.factory('weatherHttpInterceptor', function(){
+			return {}
+		});
+		$httpProvider.interceptors.push('weatherHttpInterceptor');	
+	} ]);

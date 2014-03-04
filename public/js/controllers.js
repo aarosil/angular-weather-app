@@ -52,7 +52,7 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
   		//used in raw data table to show human readable date
   		$scope.date = function(date) {return new Date(date);}
   		// used to translate key to display name 
-  		// key will be a prop. of either display or observation
+  		// key will be a prop. of either 'summary' or 'observation'
   		$scope.getName = function(key) { 
 			return $scope.dataFields.observation.hasOwnProperty(key) ? $scope.dataFields.observation[key].displayName : $scope.dataFields.summary[key].displayName
   		}
@@ -93,7 +93,8 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 		}
 
 		function clearErrorMessages() {
-			$scope.formData.locationValidationMessage = $scope.formData.geolocationErrorMessage = "";
+			$scope.formData.locationValidationMessage = "";
+			$scope.formData.geolocationErrorMessage = "";
 		}
 
 		$scope.validateDateRange = function () {
