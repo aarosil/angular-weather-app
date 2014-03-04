@@ -202,7 +202,7 @@ weatherDirectives.directive('weatherSpinnerGif', ['$q', '$timeout', '$window', '
 				overlayContainer = document.getElementById('overlay-container');
 
 				weatherHttpInterceptor.request = function(config) {
-					processRequest();
+					if (RegExp('\^/weather|\^/history').test(config.url)) processRequest();
 					return config || $q.when(config);
 				}
 
@@ -211,7 +211,7 @@ weatherDirectives.directive('weatherSpinnerGif', ['$q', '$timeout', '$window', '
 					return $q.reject(rejection);
 				}
 				weatherHttpInterceptor.response = function (response) {
-					processResponse();
+					if (RegExp('\^/weather|\^/history').test(response.config.url)) processResponse();
 					return response || $q.when(response);
 				},
 				weatherHttpInterceptor.responseError = function(rejection){
