@@ -99,6 +99,112 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 		}
 	}]);
 
+weatherDirectives.directive('weatherBarChart', ['d3Service', '$window', 
+	function(d3Service, $window){
+		return {
+
+			restrict: 'EA', 
+			scope: {
+				data: '=',  // data format is {time: time, field1: val1, field2, val2, ...},
+				key: '=', 	// so 'key' attr on chart tells what key to graph
+				label: '='	// so label is the human-reabable name for the key
+			},
+			link: function(scope, ele, attrs) {
+				d3Service.d3().then(function(d3) {
+					
+					var svg = d3.select(ele[0])
+						.append('svg:svg')
+						.style('width', '100%')
+						.classed('barChart', true);						
+
+					$window.onresize = function() {
+						scope.$apply();
+					}
+					console.log(ele)
+					scope.$watch(function(){
+						return angular.element($window)[0].innerWidth;
+					}, function() {
+						scope.render(scope.data);
+					});
+		
+					scope.$watch('data', function(newVals, oldVals) {
+					  return scope.render(newVals);
+					}, true);					
+
+					scope.render = function(data) {
+
+						var key = scope.key
+						svg.selectAll('*').remove();
+
+						if(!data) return;	
+
+						//var width = svg.node().offsetWidth||450;
+						var elemWidth = ele[0].offsetWidth;
+						var	margin = {top: 20, right: 20, bottom: 20, left: 20};
+						var width = elemWidth - margin.left - margin.right;
+						var barPadding = 2
+						var barWidth =  width/data.length;
+						var height = (.38 * width) - margin.top - margin.bottom;
+						var format = d3.time.format('%b %_d')
+						
+						var minBarHeight = (.025 * height);
+
+						svg.attr("height", height + margin.top + margin.bottom)
+							.attr("width", width )
+
+						var y = d3.scale.linear().range([height,0]);
+						var x = d3.time.scale().range([0,width])
+						var xId = d3.scale.identity().domain([0,width]);
+						var yId = d3.scale.identity().domain([height,0]);						
+						y.domain([d3.min(data, function(d){return d[key]})-minBarHeight/2,d3.max(data, function(d){return d[key]})+minBarHeight/2]);
+						x.domain(d3.extent(data, function(d) { return d.time; }));
+									
+						var yAxis = d3.svg.axis()
+							.scale(y)
+							.orient('left')
+							.tickSize(-width, 0, 0)
+							//.tickFormat('')
+
+						svg.append('g')
+							.attr('transform', 'translate(' + margin.left +','+margin.top + ')')
+							.attr('class', 'y-axis')
+							.call(yAxis)						
+
+						var g = svg.append('g')
+							.attr('transform', 'translate(' + margin.left +','+margin.top + ')');
+
+						var bar = g.selectAll('g')
+						    .data(data)
+						 	.enter().append('g')
+
+						bar.append('rect')
+						    .attr('y', function(d) {return y(d[key]); })
+						    .attr('x', function(d, i) { return i * barWidth + barPadding; })
+						    .attr('width', barWidth - barPadding)
+						    .attr('height', function(d) {return height - y(d[key]); });
+
+						bar.append("text")
+						    .attr("y", function(d) { return y(d[key])-margin.top/2; })
+						    .attr("x", function(d, i) { return (i * barWidth)+barWidth/2; })
+						    .attr("dy", ".35em")
+						    .text(function(d) { return d3.round(d[key],1); });
+						
+						bar.append('text')
+							.attr('y', height + margin.bottom)
+							.attr('x', function(d, i) { return (i * barWidth)+barWidth/2; })
+							.attr('font-size', '11px')
+							.attr('fill', 'black')							
+							.text(function(d) {return format(new Date(d.time))}) 
+
+					}
+				})
+
+			}
+
+		}
+	}
+]);
+
 weatherDirectives.directive('weatherPieChart', ['d3Service', '$window', 
 	function(d3Service, $window) {
 		return {
