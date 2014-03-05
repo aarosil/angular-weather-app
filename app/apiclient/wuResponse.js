@@ -85,7 +85,7 @@ wuResponse.processData = function(data, fields, location, summaryFields) {
         // calculate avg daytime cloudiness for the day. 
         var avgClouds = (dayCloudyObs/dayObs)||0        
         response.summaryFields.push('day_conds')
-        response.summaryData.day_conds = avgClouds.toFixed(3) * 100;
+        response.summaryData.day_conds = Number(avgClouds.toFixed(1));
 		return response;	
  	}
 
@@ -117,13 +117,13 @@ wuResponse.processData = function(data, fields, location, summaryFields) {
 	}
 
     function wuSkyConditionsMap(e) {
-        if (e === 'Mostly Cloudy') return 0.75;
-        if (e === 'Partly Cloudy') return 0.5;
-        if (e === 'Scattered Clouds') return 0.25;
+        if (e === 'Mostly Cloudy') return 75;
+        if (e === 'Partly Cloudy') return 50;
+        if (e === 'Scattered Clouds') return 25;
         if (e === 'Clear') return 0;
         // the other possible conditions === full cloud cover
         // http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary&MR=1
-        return 1;
+        return 100;
     }
 
 	// ignore undefined value and some 

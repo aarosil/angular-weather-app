@@ -36,61 +36,73 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						if(!data) return;						
 						
 						var elemWidth = ele[0].offsetWidth;
-						var margin = {top: 20, right: 20, bottom: 30, left: 50},
-						    width =  parseInt(elemWidth,10) - margin.left - margin.right,
-						    height = 200 - margin.top - margin.bottom;
-						
+						var	margin = {top: 20, right: 30, bottom: 20, left: 30};
+						var width = elemWidth - margin.left - margin.right;
+						var height = (.38 * width) - margin.top - margin.bottom;
+						var format = d3.time.format('%b %_d')
 
-						var x = d3.time.scale()
-						    .range([0, width]);
+						svg.attr("height", height + margin.top + margin.bottom)
+							.attr("width", width )
 
-						var y = d3.scale.linear()
-						    .domain([d3.min(data, function(d){return d[key]}),d3.max(data, function(d){return d[key]})])
-						    .rangeRound([height, 0]);
-						    
+						var y = d3.scale.linear().rangeRound([height,0]);
+						var x = d3.time.scale().range([0,width])	
 
-						var xAxis = d3.svg.axis()
-						    .scale(x)
-						    .orient("bottom");
+						x.domain(d3.extent(data, function(d) { return d.time; }));
+						var minY = d3.min(data, function(d){return d[key]})
+						var maxY = d3.max(data, function(d){return d[key]})
+						y.domain([minY - (0.075*minY), maxY + (maxY*0.075)]);
 
 						 var yAxis = d3.svg.axis()
 						 	.scale(y)
-						 	.ticks(4)
-						 	.orient("left");
+							.orient('left')
+							.tickSize(-width, 0, 0)
+
+						reportNumDays = Math.round( (x.domain()[1].getTime() - x.domain()[0].getTime() )/(1000*60*60*24) );
+						var barWidth =  width/reportNumDays;
+
+						svg.append('g')
+							.attr('transform', 'translate(' + margin.left +','+margin.top + ')')
+							.attr('class', 'y-axis')
+							.call(yAxis)	
+						
+						var days = svg.append('g')
+							.attr('transform', 'translate(' + margin.left +','+margin.top + ')')
+							.attr('class', 'y-axis')		
+							
+						var dayLines = days.selectAll('g')
+						    .data(d3.range(reportNumDays))
+						 	.enter().append('g')	
+
+						dayLines.append('rect')
+						    .attr('y', function(d) {return 0; })
+						    .attr('x', function(d, i) { return (i * barWidth) + barWidth; })
+						    .attr('width', 1)
+						    .attr('height', function(d) {return height; })
+						    .attr('stroke', 'none')					 				
+						    .attr('fill', '#CCC')		
+
+						dayLines.append('text')
+							.attr('y', height + margin.bottom)
+							.attr('x', function(d, i) { return (i * barWidth) + barWidth/2; })
+							.attr('font-size', '11px')
+							.attr('fill', 'black')		
+							.style("text-anchor", "middle")					
+							.text(function(d,i) {
+								var next = x.domain()[0].getTime() + ((i)*(1000*60*60*24))
+								return format(   new   Date(  x.domain()[0].getTime() + ((i)*(1000*60*60*24))  )   )
+							}) 						    					
 
 						var line = d3.svg.line()
 						    .x(function(d) { return x(d.time); })
 						    .y(function(d) { return y(d[key]); });
 
-						svg.attr("width", parseInt(width) + margin.left + margin.right)
-							.attr("height", height + margin.top + margin.bottom)
-							.append("g")
-							.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+						var g = svg.append("g")
+							.attr('transform', 'translate(' + margin.left +','+margin.top + ')')					
 
-
-						x.domain(d3.extent(data, function(d) { return d.time; }));
-						y.domain(d3.extent(data, function(d) { return d[key]; }));
-
-						svg.append("g")
-							.attr("class", "x axis")
-							.attr("transform", "translate(0," + parseInt(height,10) + ")")
-							.call(xAxis);
-
-						svg.append("g")
-							.attr("class", "y axis")
-							.attr("transform", "translate(" + parseInt(width,10) + ",0)")
-							.call(yAxis)
-							.append("text")
-							.attr("transform", "rotate(-90)")
-							.attr("y", 6)
-							.attr("dy", ".71em")
-							.style("text-anchor", "end")
-							.text(scope.label);;						
-
-						svg.append("path")
+						g.append("path")
 							.datum(data)
 							.attr("class", "line")
-							.attr("d", line);
+							.attr("d", line)
 
 					}
 
@@ -120,7 +132,7 @@ weatherDirectives.directive('weatherBarChart', ['d3Service', '$window',
 					$window.onresize = function() {
 						scope.$apply();
 					}
-					console.log(ele)
+
 					scope.$watch(function(){
 						return angular.element($window)[0].innerWidth;
 					}, function() {
@@ -150,12 +162,10 @@ weatherDirectives.directive('weatherBarChart', ['d3Service', '$window',
 						var minBarHeight = (.025 * height);
 
 						svg.attr("height", height + margin.top + margin.bottom)
-							.attr("width", width )
+						svg.attr("width", elemWidth )
 
 						var y = d3.scale.linear().range([height,0]);
-						var x = d3.time.scale().range([0,width])
-						var xId = d3.scale.identity().domain([0,width]);
-						var yId = d3.scale.identity().domain([height,0]);						
+						var x = d3.time.scale().range([0,width])				
 						y.domain([d3.min(data, function(d){return d[key]})-minBarHeight/2,d3.max(data, function(d){return d[key]})+minBarHeight/2]);
 						x.domain(d3.extent(data, function(d) { return d.time; }));
 									
@@ -274,7 +284,7 @@ weatherDirectives.directive('weatherPieChart', ['d3Service', '$window',
 							.attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
 							.attr("dy", ".35em")
 							.style("text-anchor", "middle")
-							.text(function(d) { return d.data.status + " (" + d.data.value + "%)"; });
+							.text(function(d) { return d.data.status + " (" + d3.round(d.data.value,1) + "%)"; });
 
 					}					
 

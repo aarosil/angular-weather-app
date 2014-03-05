@@ -26,9 +26,9 @@ describe('Weather Underground Response Handler', function(){
 		expect(processed.summaryData.avg_wspdi).toBe(30)
 		expect(processed.summaryData.avg_tempi).toBe(50)
 		// all daytime observations were cloudy
-		expect(processed.summaryData.day_conds).toBe(100)
+		expect(processed.summaryData.day_conds).toBe('100.0')
 		// only 3/4 total observations were cloudy
-		expect(processed.summaryData.avg_conds).toBe(0.75)
+		expect(processed.summaryData.avg_conds).toBe(75)
 		
 	})
 
@@ -37,7 +37,7 @@ describe('Weather Underground Response Handler', function(){
 		summaryFields = ['tempi', 'conds', 'wspdi', 'hum'];
 		processed = wuResponse(data.dayWithBadTemps, fields, location, summaryFields)
 		expect(processed.summaryData.avg_tempi).toBe(50)
-		expect(processed.summaryData.avg_conds).toBe(0.25)
+		expect(processed.summaryData.avg_conds).toBe(25)
 		expect(processed.summaryData.avg_wspdi).toBe(30)
 		expect(processed.summaryData.avg_hum).toBe(70)
 	})

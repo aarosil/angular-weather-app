@@ -39,7 +39,7 @@
                     <div class="col-lg-8">
                       <div class="checkbox" data-ng-repeat="(key, keyConfig) in dataFields.observation | object2Array |orderBy:'order'">
                         <label>                  
-                          <input type="checkbox" data-ng-disabled="keyConfig.name==='conds'||keyConfig.name==='tempi'" data-ng-model="keyConfig.active" ng-checked="keyConfig.active">{{keyConfig.displayName}} 
+                          <input type="checkbox" data-ng-disabled="keyConfig.name==='conds'||keyConfig.name==='tempi'" data-ng-model="keyConfig.active" data-ng-checked="keyConfig.active">{{keyConfig.displayName}} 
                         </label>
                       </div>
                     </div>
@@ -50,7 +50,7 @@
                     <div class="col-lg-8">
                       <div class="checkbox" data-ng-repeat="(key, keyConfig) in dataFields.summary | object2Array |orderBy:'order'">
                         <label>                  
-                          <input type="checkbox" data-ng-disabled="keyConfig.name==='day_conds'" data-ng-model="keyConfig.active" ng-checked="keyConfig.active">{{keyConfig.displayName}} 
+                          <input type="checkbox" data-ng-disabled="keyConfig.name==='day_conds'" data-ng-model="keyConfig.active" data-ng-checked="keyConfig.active">{{keyConfig.displayName}} 
                         </label>
                       </div>
                     </div>
@@ -110,7 +110,7 @@
 								</span>
 							</div>
 							<div data-ng-show="!graphStates[name]">
-								<weather-line-chart data="weatherData.summary" label="getName(name)" key="name"></weather-line-chart>
+								<weather-bar-chart data="weatherData.summary" label="getName(name)" key="name"></weather-bar-chart>
 							</div>
 							<div data-ng-show="rawStates[name]">
 								<table class="table table-striped">

@@ -74,6 +74,29 @@ span.disabled{
 	text-align:center;
 }
 
+
+/** SVG Styling **/
+.barChart rect {
+  fill: steelblue;
+}
+
+.barChart text {
+  text-anchor: middle;
+}
+
+.y-axis path {
+	opacity: 0;
+}
+.y-axis line {
+	fill: none;
+	stroke: #CCC;
+}
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
 path {
     stroke: steelblue;
     stroke-width: 2;

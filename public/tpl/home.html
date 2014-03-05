@@ -3,7 +3,20 @@
 		<div class="jumbotron">
 			<div class="content col-lg-12">
 				<h1><span class="glyphicon-flash glyphicon"></span></img>WeatherStation</h1>
-				<p>&nbsp</p>
+					<div class="list-group">
+						<div class="list-group-item">  
+							<div class="list-group-item-heading">
+								<span class="data-heading">Temperature</span>
+								<span class="data-expand-link" style="float: right">
+									<a >Show Data</a>
+									<a >Hide Graph</a>
+								</span>
+							</div>
+							<div >
+								<weather-bar-chart data="weatherData.summary" label="label" key="key"></weather-bar-chart>
+							</div>						
+						</div>	
+					</div>
 				<p>WeatherStation lets you view current or historical weather conditions for your location.</p>
 				<p><a href="#/weather" class="btn btn-primary btn-lg">Check the Weather</a></p>
 				</div>
