@@ -75,14 +75,14 @@
 						<h4>Observations:</h4>
 						<div class="list-group-item" data-ng-repeat="name in weatherData.fields">
 							<div class="list-group-item-heading">
-								<span class="data-heading">{{getName(name)}}</span>
+								<span class="data-heading">{{getAttr(name, 'displayName')}}</span>
 								<span class="data-expand-link" style="float: right">
 									<a data-ng-click="rawStates[name] = !rawStates[name]">{{(!rawStates[name] ? 'Show' : 'Hide')}} Data</a>
 									<a data-ng-click="graphStates[name] = !graphStates[name]">{{(graphStates[name] ? 'Show' : 'Hide')}} Graph</a>
 								</span>
 							</div>
 							<div data-ng-show="!graphStates[name]">
-								<weather-line-chart data="weatherData.observations" label="getName(name)" key="name"></weather-line-chart>
+								<weather-line-chart data="weatherData.observations" label="getAttr(name, 'displayName')" key="name" units="getAttr(name, 'units')"></weather-line-chart>
 							</div>
 							<div data-ng-show="rawStates[name]">
 								<table class="table table-striped">
@@ -103,14 +103,14 @@
 						<h4>Daily Averages:</h4>
 						<div class="list-group-item" data-ng-repeat="name in weatherData.summaryFields">  
 							<div class="list-group-item-heading">
-								<span class="data-heading">{{getName(name)}}</span>
+								<span class="data-heading">{{getAttr(name, 'displayName')}}</span>
 								<span class="data-expand-link" style="float: right">
 									<a data-ng-click="rawStates[name] = !rawStates[name]">{{(!rawStates[name] ? 'Show' : 'Hide')}} Data</a>
 									<a data-ng-click="graphStates[name] = !graphStates[name]">{{(graphStates[name] ? 'Show' : 'Hide')}} Graph</a>
 								</span>
 							</div>
 							<div data-ng-show="!graphStates[name]">
-								<weather-bar-chart data="weatherData.summary" label="getName(name)" key="name"></weather-bar-chart>
+								<weather-bar-chart data="weatherData.summary" label="getAttr(name, 'displayName')" key="name" units="getAttr(name, 'units')"></weather-bar-chart>
 							</div>
 							<div data-ng-show="rawStates[name]">
 								<table class="table table-striped">

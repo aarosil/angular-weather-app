@@ -6,15 +6,27 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 			restrict: 'EA', 
 			scope: {
 				data: '=',  // data format is {time: time, field1: val1, field2, val2, ...},
-				key: '=', 	// so 'key' attr on chart tells what key to graph
-				label: '='	// so label is the human-reabable name for the key
+				key: '=', 	// so 'key' attr on chart tells what attr in the data to graph,
+				label: '=',	// 'label' is the human-reabable name for the key, and
+				units: '='	// 'units' is what to append to the reading, ie F, %, inHg, etc.
 			},
 			link: function(scope, ele, attrs) {
 				d3Service.d3().then(function(d3) {
 					
+					var key = scope.key
+					//setup parent SVG element
 					var svg = d3.select(ele[0])
 						.append('svg:svg')
 						.style('width', '100%');
+
+					//setup the tooltip div
+					var tip = d3.select(ele[0]).append('div')
+						.attr('class', 'hidden chart-tip')
+						.attr('id', key)
+					tip.append('p').append('span')
+						.attr('id', 'value'+key)
+					tip.append('p').append('span')
+						.attr('id', 'time'+key)						
 
 					$window.onresize = function() {
 						scope.$apply();
@@ -32,11 +44,11 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 
 					scope.render = function(data) {
 						svg.selectAll('*').remove();
-						var key = scope.key
+
 						if(!data) return;						
 						
 						var elemWidth = ele[0].offsetWidth;
-						var	margin = {top: 20, right: 30, bottom: 20, left: 30};
+						var	margin = {top: 20, right: 20, bottom: 20, left: 30};
 						var width = elemWidth - margin.left - margin.right;
 						var height = (.38 * width) - margin.top - margin.bottom;
 						var format = d3.time.format('%b %_d')
@@ -52,7 +64,7 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 						var maxY = d3.max(data, function(d){return d[key]})
 						y.domain([minY - (0.075*minY), maxY + (maxY*0.075)]);
 
-						 var yAxis = d3.svg.axis()
+						var yAxis = d3.svg.axis()
 						 	.scale(y)
 							.orient('left')
 							.tickSize(-width, 0, 0)
@@ -103,6 +115,57 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 							.datum(data)
 							.attr("class", "line")
 							.attr("d", line)
+
+						var focus = g.append('g')
+							.attr('class', 'focus')
+							.style('display', 'none')
+
+						focus.append('circle')
+							.attr('r', 2)
+							.attr('fill', 'red')
+
+						focus.append('text')
+							.attr('x', margin.top/2)
+							.attr('y', -margin.left/2)
+							.attr('dy', '.35em')
+
+						g.append('rect')
+							.attr('class', 'overlay')
+							.attr('width', width)
+							.attr('height', height)
+							.attr('fill', 'none')
+							.attr('pointer-events', 'all')
+							.on('mouseover', function () { 
+								focus.style('display', null);
+								d3.select('#'+key).classed('hidden', false)
+							})
+							.on('mouseout', function () { 
+								focus.style('display', 'none');
+								d3.select('#'+key).classed('hidden', true)
+							})
+							.on('mousemove', mousemove)
+
+						var bisectDate = d3.bisector(function(d) { return d.time; }).left
+						var dtime = d3.time.format('%I:%M %p')							
+
+						function mousemove() {
+							var x0 = x.invert(d3.mouse(this)[0]).getTime()
+							var i = bisectDate(data, x0, 1)
+							var d0 = data[i-1]
+							var d1 = data[i]
+							d = x0 - d0.time > d1.time - x0 ? d1 : d0
+							focus.attr('transform', 'translate('+ x(d.time) + ',' + y(d[key]) + ')');
+							//focus.select('text').text(d[key] + " " + scope.units + ", " + dtime(new Date(d.time)))
+							d3.select('#'+key)
+								.style('left', (x(d.time))+40 + "px")
+								.style('top', (y(d[key]))-30 + "px")
+							d3.select('#value'+key)
+								.text(d[key] + " " + scope.units)
+							d3.select('#time'+key)
+								.text(dtime(new Date(d.time)))
+							//d3.select('#chart-tip').classed('hidden', false)
+							//console.log(x(d.time), y(d[key]))
+						}
 
 					}
 
