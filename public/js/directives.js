@@ -155,16 +155,14 @@ weatherDirectives.directive('weatherLineChart', ['d3Service', '$window',
 							var d1 = data[i]
 							d = x0 - d0.time > d1.time - x0 ? d1 : d0
 							focus.attr('transform', 'translate('+ x(d.time) + ',' + y(d[key]) + ')');
-							//focus.select('text').text(d[key] + " " + scope.units + ", " + dtime(new Date(d.time)))
+							
 							d3.select('#'+key)
-								.style('left', (x(d.time))+40 + "px")
-								.style('top', (y(d[key]))-30 + "px")
+								.style('left', (x(d.time))+30 + "px")
+								.style('top', (y(d[key]))-20 + "px")
 							d3.select('#value'+key)
-								.text(d[key] + " " + scope.units)
+								.text(d[key] + scope.units)
 							d3.select('#time'+key)
 								.text(dtime(new Date(d.time)))
-							//d3.select('#chart-tip').classed('hidden', false)
-							//console.log(x(d.time), y(d[key]))
 						}
 
 					}

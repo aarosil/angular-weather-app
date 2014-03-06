@@ -2,7 +2,7 @@ var weatherControllers = angular.module('weatherControllers', ['weatherDirective
 
 weatherControllers.controller('HomeCtrl', ['$scope',
 	function($scope){
-		$scope.weatherData = {"summary":[{"time":1393012800000,"avg_tempi":38.627027027027026,"avg_hum":93.37837837837837,"avg_precipi":0.006956521739130436,"avg_conds":0.8445945945945946,"avg_dewpti":36.76216216216216,"avg_wspdi":8.075675675675674,"avg_pressurei":29.85081081081081,"day_conds":100},{"time":1393099200000,"avg_tempi":43.166666666666664,"avg_hum":49.916666666666664,"avg_precipi":0,"avg_conds":0,"avg_dewpti":23.087500000000002,"avg_wspdi":5.095454545454545,"avg_pressurei":29.9825,"day_conds":0},{"time":1393185600000,"avg_tempi":43.3125,"avg_hum":51.708333333333336,"avg_precipi":0,"avg_conds":0.4722222222222222,"avg_dewpti":25.904166666666672,"avg_wspdi":4.237500000000001,"avg_pressurei":29.930000000000007,"day_conds":11.4},{"time":1393272000000,"avg_tempi":31.825,"avg_hum":44.666666666666664,"avg_precipi":0,"avg_conds":0.34375,"avg_dewpti":12.266666666666671,"avg_wspdi":14.920833333333333,"avg_pressurei":29.908749999999994,"day_conds":22.7},{"time":1393358400000,"avg_tempi":24.137037037037036,"avg_hum":53.592592592592595,"avg_precipi":0,"avg_conds":0.48,"avg_dewpti":9.344444444444443,"avg_wspdi":9.307407407407409,"avg_pressurei":30.001481481481484,"day_conds":60.699999999999996},{"time":1393444800000,"avg_tempi":21.996551724137934,"avg_hum":55.58620689655172,"avg_precipi":0,"avg_conds":0.625,"avg_dewpti":7.382758620689656,"avg_wspdi":8.554166666666667,"avg_pressurei":29.885862068965523,"day_conds":82.8},{"time":1393531200000,"avg_tempi":19.142307692307693,"avg_hum":44.15384615384615,"avg_precipi":0,"avg_conds":0.4605263157894737,"avg_dewpti":-0.026923076923077032,"avg_wspdi":11.978260869565217,"avg_pressurei":29.775769230769235,"day_conds":46.2},{"time":1393617600000,"avg_tempi":13.2125,"avg_hum":42.041666666666664,"avg_precipi":0,"avg_conds":0,"avg_dewpti":-6.499999999999999,"avg_wspdi":8.35833333333333,"avg_pressurei":30.340833333333332,"day_conds":0},{"time":1393704000000,"avg_tempi":24.337500000000006,"avg_hum":52.541666666666664,"avg_precipi":0,"avg_conds":0.7954545454545454,"avg_dewpti":8.799999999999999,"avg_wspdi":3.649999999999999,"avg_pressurei":30.31291666666667,"day_conds":4.5},{"time":1393790400000,"avg_tempi":33.63750000000001,"avg_hum":52.583333333333336,"avg_precipi":0,"avg_conds":0.9375,"avg_dewpti":17.80416666666667,"avg_wspdi":5.729166666666667,"avg_pressurei":30.04583333333333,"day_conds":93.2}]}
+		$scope.weatherData = {"summary":[{"time":1393012800000,"avg_tempi":38.627027027027026},{"time":1393099200000,"avg_tempi":43.166666666666664},{"time":1393185600000,"avg_tempi":43.3125},{"time":1393272000000,"avg_tempi":31.825,},{"time":1393358400000,"avg_tempi":24.137037037037},{"time":1393444800000,"avg_tempi":21.996551724137934},{"time":1393531200000,"avg_tempi":19.142307692307693},{"time":1393617600000,"avg_tempi":13.2125},{"time":1393704000000,"avg_tempi":24.3375000000000},{"time":1393790400000,"avg_tempi":33.63750000000}]}
 		$scope.label = "Temperature";
 		$scope.units = "F";
 		$scope.key = 'avg_tempi';	
@@ -38,21 +38,21 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
   		$scope.rawStates = {}; //store collapse/open state of raw data
   		$scope.dataFields = {  
   			observation: {	// automatically display the correct name in charts	
-	  			tempi: {name: 'tempi', displayName: 'Temperature', order: 0, active: true, units: "F"},
+	  			tempi: {name: 'tempi', displayName: 'Temperature', order: 0, active: true, units: "\xB0 F"},
 	  			hum: {name: 'hum', displayName: 'Humidity', order: 3, active: false, units: "%"},
 	  			precipi: {name: 'precipi', displayName: 'Precipitation', order:2, active: false, units: "in"},
 	  			conds: {name: 'conds', displayName: 'Cloud Cover', order: 1, active: true, units: "%"},  
-	  			dewpti: {name: 'dewpti', displayName: 'Dewpoint', order: 4, active: false, units: "F"},
+	  			dewpti: {name: 'dewpti', displayName: 'Dewpoint', order: 4, active: false, units: "\xB0 F"},
 	  			wspdi: {name: 'wspdi', displayName: 'Wind Speed', order: 5, active: false, units: "kn"},
 	  			pressurei: {name: 'pressurei', displayName: 'Pressure', order: 6, active: false, units: "inHg"} 	 			
   			}, 
   			summary: {
   				day_conds: {name: 'day_conds', displayName: 'Avg Daytime Cloud Cover', order: 0, active: true, units: "%"},
-	  			avg_tempi: {name: 'tempi', displayName: 'Avg Temperature', order: 2, active: false, units: "F"},
+	  			avg_tempi: {name: 'tempi', displayName: 'Avg Temperature', order: 2, active: false, units: "\xB0 F"},
 	  			avg_hum: {name: 'hum', displayName: 'Avg Humidity', order: 4, active: false, units: "%"},
 	  			avg_precipi: {name: 'precipi', displayName: 'Avg Precipitation', order:3, active: false, units: "in"},
 	  			avg_conds: {name: 'conds', displayName: 'Avg Cloud Cover', order: 1, active: false, units: "%"},  
-	  			avg_dewpti: {name: 'dewpti', displayName: 'Avg Dewpoint', order: 5, active: false, units: "F"},
+	  			avg_dewpti: {name: 'dewpti', displayName: 'Avg Dewpoint', order: 5, active: false, units: "\xB0 F"},
 	  			avg_wspdi: {name: 'wspdi', displayName: 'Avg Wind Speed', order: 6, active: false, units: "kn"},
 	  			avg_pressurei: {name: 'pressurei', displayName: 'Avg Pressure', order: 7, active: false, units: "inHg"} 		  				
   			}
