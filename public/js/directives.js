@@ -234,8 +234,7 @@ weatherDirectives.directive('weatherBarChart', ['d3Service', '$window',
 							.scale(y)
 							.orient('left')
 							.tickSize(-width, 0, 0)
-							//.tickFormat('')
-
+							
 						svg.append('g')
 							.attr('transform', 'translate(' + margin.left +','+margin.top + ')')
 							.attr('class', 'y-axis')

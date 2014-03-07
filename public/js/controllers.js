@@ -40,21 +40,21 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
   			observation: {	// automatically display the correct name in charts	
 	  			tempi: {name: 'tempi', displayName: 'Temperature', order: 0, active: true, units: "\xB0 F"},
 	  			hum: {name: 'hum', displayName: 'Humidity', order: 3, active: false, units: "%"},
-	  			precipi: {name: 'precipi', displayName: 'Precipitation', order:2, active: false, units: "in"},
+	  			precipi: {name: 'precipi', displayName: 'Precipitation', order:2, active: false, units: " in"},
 	  			conds: {name: 'conds', displayName: 'Cloud Cover', order: 1, active: true, units: "%"},  
 	  			dewpti: {name: 'dewpti', displayName: 'Dewpoint', order: 4, active: false, units: "\xB0 F"},
-	  			wspdi: {name: 'wspdi', displayName: 'Wind Speed', order: 5, active: false, units: "kn"},
-	  			pressurei: {name: 'pressurei', displayName: 'Pressure', order: 6, active: false, units: "inHg"} 	 			
+	  			wspdi: {name: 'wspdi', displayName: 'Wind Speed', order: 5, active: false, units: " kn"},
+	  			pressurei: {name: 'pressurei', displayName: 'Pressure', order: 6, active: false, units: " inHg"} 	 			
   			}, 
   			summary: {
-  				day_conds: {name: 'day_conds', displayName: 'Avg Daytime Cloud Cover', order: 0, active: true, units: "%"},
+  				day_conds: {name: 'day_conds', displayName: 'Avg Daytime Cloud Cover', order: 0, active: true, units: " %"},
 	  			avg_tempi: {name: 'tempi', displayName: 'Avg Temperature', order: 2, active: false, units: "\xB0 F"},
 	  			avg_hum: {name: 'hum', displayName: 'Avg Humidity', order: 4, active: false, units: "%"},
-	  			avg_precipi: {name: 'precipi', displayName: 'Avg Precipitation', order:3, active: false, units: "in"},
+	  			avg_precipi: {name: 'precipi', displayName: 'Avg Precipitation', order:3, active: false, units: " in"},
 	  			avg_conds: {name: 'conds', displayName: 'Avg Cloud Cover', order: 1, active: false, units: "%"},  
 	  			avg_dewpti: {name: 'dewpti', displayName: 'Avg Dewpoint', order: 5, active: false, units: "\xB0 F"},
-	  			avg_wspdi: {name: 'wspdi', displayName: 'Avg Wind Speed', order: 6, active: false, units: "kn"},
-	  			avg_pressurei: {name: 'pressurei', displayName: 'Avg Pressure', order: 7, active: false, units: "inHg"} 		  				
+	  			avg_wspdi: {name: 'wspdi', displayName: 'Avg Wind Speed', order: 6, active: false, units: " kn"},
+	  			avg_pressurei: {name: 'pressurei', displayName: 'Avg Pressure', order: 7, active: false, units: " inHg"} 		  				
   			}
   		};
 
