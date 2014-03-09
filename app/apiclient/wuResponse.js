@@ -7,11 +7,11 @@ var wuResponse = function (data, fields, location, summaryFields) {
 
 	function init() {
 		if (!data) {return}
-		if (data.hasOwnProperty('current_observation')) {
+		if (_(data).has('current_observation')) {
 			return processCurrent(data.current_observation)
 		}
 		if (!fields||!location) {return;}
-		if (data instanceof Array && data.length > 0 ) {
+		if (_(data).isArray() && data.length > 0 ) {
 			return processHistory(data)
 		} 
 	}
@@ -65,7 +65,7 @@ var wuResponse = function (data, fields, location, summaryFields) {
 
 	        // if this observation occured in daylight, 
 	        // accumulate towards total daytime cloudiness
-	        if ( daylight.sunriseEnd.getTime() < entry.time && daylight.sunset.getTime() > entry.time) {
+	        if ( daylight.sunriseEnd.getTime() < entry.time && daylight.sunset.getTime() > entry.time ) {
 	            dayObs++;
 	            dayCloudyObs += extractValue(obs, 'conds');
 	        }
@@ -76,8 +76,8 @@ var wuResponse = function (data, fields, location, summaryFields) {
 
 		// calcuate any summaries, reported once a day
         response.summaryData.time = response.date.getTime()
-        response.summaryFields = summaryFields.map(function(i){return 'avg_' + i})
-        _.each(_.keys(totals), function(key){
+        response.summaryFields = _(summaryFields).map(function(i){return 'avg_' + i})
+        _.each(_(totals).keys(), function(key){
         	response.summaryData['avg_'+key] = totals[key].value/totals[key].count
         })
 
