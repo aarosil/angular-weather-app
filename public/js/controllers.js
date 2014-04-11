@@ -1,8 +1,9 @@
 var weatherControllers = angular.module('weatherControllers', ['weatherDirectives']);
 
-weatherControllers.controller('HomeCtrl', ['$scope',
-	function($scope){
-		$scope.weatherData = {"summary":[{"time":1393012800000,"avg_tempi":38.627027027027026},{"time":1393099200000,"avg_tempi":43.166666666666664},{"time":1393185600000,"avg_tempi":43.3125},{"time":1393272000000,"avg_tempi":31.825,},{"time":1393358400000,"avg_tempi":24.137037037037},{"time":1393444800000,"avg_tempi":21.996551724137934},{"time":1393531200000,"avg_tempi":19.142307692307693},{"time":1393617600000,"avg_tempi":13.2125},{"time":1393704000000,"avg_tempi":24.3375000000000},{"time":1393790400000,"avg_tempi":33.63750000000}]}
+weatherControllers.controller('HomeCtrl', ['$scope', 'sampleData',
+	function($scope, data){
+		console.log(data)
+		$scope.weatherData = data
 		$scope.label = "Temperature";
 		$scope.units = "F";
 		$scope.key = 'avg_tempi';	
@@ -197,3 +198,13 @@ weatherControllers.controller('WeatherCtrl', ['$scope', '$modal', 'WeatherSvc',
 
 	}
 ]);
+
+SampleData = {
+	sampleData: function($q){
+		var d = $q.defer()
+		data = {"summary":[{"time":1393012800000,"avg_tempi":38.627027027027026},{"time":1393099200000,"avg_tempi":43.166666666666664},{"time":1393185600000,"avg_tempi":43.3125},{"time":1393272000000,"avg_tempi":31.825,},{"time":1393358400000,"avg_tempi":24.137037037037},{"time":1393444800000,"avg_tempi":21.996551724137934},{"time":1393531200000,"avg_tempi":19.142307692307693},{"time":1393617600000,"avg_tempi":13.2125},{"time":1393704000000,"avg_tempi":24.3375000000000},{"time":1393790400000,"avg_tempi":33.63750000000}]}
+		d.resolve(data)
+		return d.promise
+	}
+
+}

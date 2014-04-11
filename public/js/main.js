@@ -13,7 +13,8 @@ weatherApp.config(['$routeProvider',
 		$routeProvider.
 			when('/', {
 				templateUrl: 'tpl/home.html',
-				controller: 'HomeCtrl'
+				controller: 'HomeCtrl',
+				resolve: SampleData
 			}).
 			when('/weather', {
 				templateUrl: 'tpl/weather.html',
