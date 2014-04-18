@@ -9,7 +9,7 @@ exports.formatDatesWU = function(start, end) {
 	//format the date in YYYYMMDD as the WU API expects 
 	function formatDate(date){
 		var ret = date.getFullYear() 
-		ret += date.getMonth() < 9 ? "0" + (date.getMonth()+1) : (date.getMonth()+1) 
+		ret += date.getMonth() < 9 ? "0" + (date.getMonth()+1) : (date.getMonth()+1).toString() 
 		ret += date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
 		return ret;
 	}
